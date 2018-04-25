@@ -692,13 +692,13 @@ function quick_search($q) {
     //         Look for an alias name (and display associated hosts)
     //         Look for a subnet name
 
-    printmsg("DEBUG => quick_search({$q}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => quick_search({$q}) called", 3);
 
     // Check to see if it is a MAC.. do it here instead of in the next interface section
     // so that we can properly find multiple hosts with the same mac
     $mac = mac_mangle($q, 1);
     if ($mac != -1) {
-        printmsg("DEBUG => quick_search() Looks like a MAC, Returning mac = {$q}" ,3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => quick_search() Looks like a MAC, Returning mac = {$q}" ,3);
         return( array('hosts', array('mac' => $q) ) );
     }
 
@@ -706,7 +706,7 @@ function quick_search($q) {
     list($status, $rows, $record) = ona_find_interface($q);
     // If it was, display the associated host record
     if ($rows) {
-        printmsg("DEBUG => quick_search() returning host match (ID={$record['host_id']})", 3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => quick_search() returning host match (ID={$record['host_id']})", 3);
         return( array('hosts', array('host_id' => $record['host_id']) ) );
     }
 
@@ -714,12 +714,12 @@ function quick_search($q) {
     list($status, $rows, $record) = ona_find_subnet($q);
     // If it was, display the associated subnet record
     if ($rows) {
-        printmsg("DEBUG => quick_search() returning subnet match (ID={$record['id']})", 3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => quick_search() returning subnet match (ID={$record['id']})", 3);
         return( array('subnets', array('subnet_id' => $record['id']) ) );
     }
 
     // Well, I guess we'll assume $q is a hostname/alias search
-    printmsg("DEBUG => quick_search() found no subnet or host match. Returning hostname = {$q}" ,3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => quick_search() found no subnet or host match. Returning hostname = {$q}" ,3);
     return( array('hosts', array('hostname' => $q) ) );
 }
 

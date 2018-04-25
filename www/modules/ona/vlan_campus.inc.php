@@ -29,7 +29,7 @@ function vlan_campus_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => vlan_campus_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => vlan_campus_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -64,7 +64,7 @@ EOM
     list($status, $rows, $campus) = ona_get_vlan_campus_record(array('name' => $options['name']));
 
     if ($status or $rows) {
-        printmsg("DEBUG => The vlan campus {$options['name']} already exists!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The vlan campus {$options['name']} already exists!",3);
         $self['error'] = "ERROR => The vlan campus {$options['name']} already exists!";
         return(array(3, $self['error'] . "\n"));
     }
@@ -73,7 +73,7 @@ EOM
     // Check permissions
     if (!auth('vlan_add')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -81,10 +81,10 @@ EOM
     $id = ona_get_next_id('vlan_campuses');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(5, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => ID for new VLAN Campus: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new VLAN Campus: $id", 3);
 
     // Add the record
     list($status, $rows) =
@@ -98,13 +98,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => vlan_campus_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => VLAN Campus ADDED: {$options['name']}";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -146,7 +146,7 @@ function vlan_campus_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => vlan_campus_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => vlan_campus_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -186,7 +186,7 @@ EOM
         list($status, $rows, $campus) = ona_get_vlan_campus_record(array('id' => $options['name']));
 
         if (!$campus['id']) {
-            printmsg("DEBUG => Unable to find VLAN campus using the ID {$options['name']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find VLAN campus using the ID {$options['name']}!",3);
             $self['error'] = "ERROR => Unable to find VLAN campus using the ID {$options['name']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -195,7 +195,7 @@ EOM
         $options['name'] = strtoupper(trim($options['name']));
         list($status, $rows, $campus) = ona_get_vlan_campus_record(array('name' => $options['name']));
         if (!$campus['id']) {
-            printmsg("DEBUG => Unable to find VLAN campus using the name {$options['name']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find VLAN campus using the name {$options['name']}!",3);
             $self['error'] = "ERROR => Unable to find VLAN campus using the name {$options['name']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -204,7 +204,7 @@ EOM
 
     list($status, $rows, $vlan) = db_get_records($onadb, 'vlans', array('vlan_campus_id' => $campus['id']), '' ,0);
     if ($rows != 0) {
-        printmsg("DEBUG => This VLAN campus ({$campus['name']}) is in use by {$rows} VLAN(s)!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => This VLAN campus ({$campus['name']}) is in use by {$rows} VLAN(s)!",3);
         $self['error'] = "ERROR => This VLAN campus ({$campus['name']}) is in use by {$rows} VLAN(s)!";
         return(array(6, $self['error'] . "\n" .
                         "INFO  => Please dis-associate those VLANS from this campus before deleting.\n"));
@@ -216,20 +216,20 @@ EOM
         // Check permissions
         if (!auth('vlan_del')) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'vlan_campuses', array('id' => $campus['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => vlan_campus_del() SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(4, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => VLAN Campus DELETED: {$campus['name']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -284,7 +284,7 @@ function vlan_campus_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => vlan_campus_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => vlan_campus_modify({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -324,7 +324,7 @@ EOM
         list($status, $rows, $campus) = ona_get_vlan_campus_record(array('id' => $options['name']));
 
         if (!$campus['id']) {
-            printmsg("DEBUG => Unable to find VLAN campus using the ID {$options['name']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find VLAN campus using the ID {$options['name']}!",3);
             $self['error'] = "ERROR => Unable to find VLAN campus using the ID {$options['name']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -333,13 +333,13 @@ EOM
         $options['name'] = strtoupper(trim($options['name']));
         list($status, $rows, $campus) = ona_get_vlan_campus_record(array('name' => $options['name']));
         if (!$campus['id']) {
-            printmsg("DEBUG => Unable to find VLAN campus using the name {$options['name']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find VLAN campus using the name {$options['name']}!",3);
             $self['error'] = "ERROR => Unable to find VLAN campus using the name {$options['name']}!";
             return(array(2, $self['error'] . "\n"));
         }
     }
 
-    printmsg("DEBUG => Found VLAN campus: {$campus['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Found VLAN campus: {$campus['name']}", 3);
 
 
     // This variable will contain the updated info we'll insert into the DB
@@ -352,7 +352,7 @@ EOM
         list($status, $rows, $record) =  db_get_records($onadb, 'vlan_campuses', "id != {$campus['id']} AND name LIKE '{$options['set_name']}'");
 
         if ($status or $rows) {
-            printmsg("DEBUG => The VLAN campus ({$options['set_name']}) already exists!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The VLAN campus ({$options['set_name']}) already exists!",3);
             $self['error'] = "ERROR => The VLAN campus {$options['set_name']} already exists!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -363,7 +363,7 @@ EOM
     // Check permissions
     if (!auth('vlan_modify')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -372,7 +372,7 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'vlan_campuses', array('id' => $campus['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => vlan_campus_modify() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
 
@@ -415,7 +415,7 @@ function vlan_campus_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => vlan_campus_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => vlan_campus_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -458,7 +458,7 @@ EOM
         list($status, $rows, $campus) = ona_get_vlan_campus_record(array('id' => $options['campus']));
 
         if (!$campus['id']) {
-            printmsg("DEBUG => Unable to find campus using the ID {$options['campus']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find campus using the ID {$options['campus']}!",3);
             $self['error'] = "ERROR => Unable to find campus using the ID {$options['campus']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -467,12 +467,12 @@ EOM
         list($status, $rows, $campus) = ona_get_vlan_campus_record(array('name' => $options['campus']));
         if (!$campus['id']) {
             $self['error'] = "ERROR => Unable to find campus using the name {$options['campus']}!";
-            printmsg("DEBUG => Unable to find campus using the name {$options['campus']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find campus using the name {$options['campus']}!",3);
             return(array(2, $self['error'] . "\n"));
         }
     }
 
-    printmsg("DEBUG => Found campus: {$campus['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Found campus: {$campus['name']}", 3);
 
     // Build text to return
     $text  = "VLAN CAMPUS RECORD\n";

@@ -161,7 +161,7 @@ function ws_save($window_name, $form='') {
     // Don't insert a string of all white space!
     if(trim($form['dns_view_name']) == "") {
         $self['error'] = "ERROR => Blank names not allowed.";
-        printmsg($self['error'], 1);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
         $response->addScript("alert('{$self['error']}');");
         return($response->getXML());
     }
@@ -179,7 +179,7 @@ function ws_save($window_name, $form='') {
             list($status, $rows, $test) = ona_get_record(array('name' => $form['dns_view_name']), 'dns_views');
             if ($rows) {
                 $self['error'] = "ERROR => The name you are trying to use already exists.";
-                printmsg($self['error'], 1);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
                 $response->addScript("alert('{$self['error']}');");
                 return($response->getXML());
             }
@@ -190,7 +190,7 @@ function ws_save($window_name, $form='') {
         list($status, $rows) = db_update_record($onadb, 'dns_views', array('id' => $form['id']), $SET );
         if ($status or !$rows) {
             $self['error'] = "ERROR => dns_view_edit update ws_save() failed: " . $self['error'];
-            printmsg($self['error'], 1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
             $response->addScript("alert('{$self['error']}');");
         }
         else {
@@ -199,9 +199,9 @@ function ws_save($window_name, $form='') {
 
             // Return the success notice
             $self['error'] = "INFO => DNS view UPDATED:{$new_type['id']}: {$new_type['name']}";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             $log_msg = "INFO => DNS view UPDATED:{$new_type['id']}: name[{$original_type['name']}=>{$new_type['name']}]";
-            printmsg($log_msg, 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
         }
 
     }
@@ -212,7 +212,7 @@ function ws_save($window_name, $form='') {
         list($status, $rows, $test) = ona_get_record(array('name' => $form['dns_view_name']), 'dns_views');
         if ($rows) {
             $self['error'] = "ERROR => The name you are trying to use already exists.";
-            printmsg($self['error'], 1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
             $response->addScript("alert('{$self['error']}');");
             return($response->getXML());
         }
@@ -221,10 +221,10 @@ function ws_save($window_name, $form='') {
 
         if (!$id) {
             $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-            printmsg($self['error'], 1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
         }
         else {
-            printmsg("DEBUG => id for new dns view record: $id", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => id for new dns view record: $id", 3);
             list($status, $rows) = db_insert_record($onadb,
                                         "dns_views",
                                         array('id' => $id,
@@ -233,11 +233,11 @@ function ws_save($window_name, $form='') {
 
             if ($status or !$rows) {
                 $self['error'] = "ERROR => dns_view_edit add ws_save() failed: " . $self['error'];
-                printmsg($self['error'], 1);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
             }
             else {
                 $self['error'] = "INFO => DNS view ADDED: {$form['dns_view_name']} ";
-                printmsg($self['error'], 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
         }
     }

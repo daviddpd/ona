@@ -45,7 +45,7 @@ function dhcp_entry_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.03';
 
-    printmsg("DEBUG => dhcp_entry_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -99,7 +99,7 @@ EOM
     // trim leading and trailing whitespace from 'value' and check that a value exists
     $dhcp_option_value = trim($options['value']);
     if (strlen($dhcp_option_value) == 0 ) {
-        printmsg("DEBUG => The DHCP value was blank",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The DHCP value was blank",3);
         $self['error'] = "ERROR => DHCP value was blank";
         return(array(2, $self['error'] . "\n"));
     }
@@ -116,7 +116,7 @@ EOM
         list($status, $rows, $host) = ona_find_host($options['host']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The host specified, {$options['host']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$options['host']}, does not exist!",3);
             $self['error'] = "ERROR => The host specified, {$options['host']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -132,7 +132,7 @@ EOM
         list($status, $rows, $subnet) = ona_find_subnet($options['subnet']);
 
         if (!$subnet['id']) {
-            printmsg("DEBUG => The subnet specified, {$options['subnet']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The subnet specified, {$options['subnet']}, does not exist!",3);
             $self['error'] = "ERROR => The subnet specified, {$options['subnet']}, does not exist!";
             return(array(3, $self['error'] . "\n"));
         }
@@ -148,7 +148,7 @@ EOM
         list($status, $rows, $host) = ona_find_host($options['server']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The server specified, {$options['server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['server']}, does not exist!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -157,7 +157,7 @@ EOM
         list($status, $rows, $server) = ona_get_dhcp_server_subnet_record(array('host_id' => $host['id']));
 
         if (!$rows) {
-            printmsg("DEBUG => The host specified, {$host['fqdn']}, is not a DHCP server!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$host['fqdn']}, is not a DHCP server!",3);
             $self['error'] = "ERROR => The host specified, {$host['fqdn']}, is not a DHCP server!";
             return(array(5, $self['error'] . "\n"));
         }
@@ -173,12 +173,12 @@ EOM
     list($status, $rows, $type) = ona_find_dhcp_option($options['option']);
 
     if (!$type['id']) {
-        printmsg("DEBUG => The DHCP parameter type specified, {$options['option']}, does not exist!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The DHCP parameter type specified, {$options['option']}, does not exist!",3);
         $self['error'] = "ERROR => The DHCP parameter type specified, {$options['option']}, does not exist!";
         return(array(8, $self['error'] . "\n"));
     }
 
-    printmsg("DEBUG => dhcp_entry_add(): Found DHCP option {$type['display_name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_add(): Found DHCP option {$type['display_name']}", 3);
 
 
     // Make sure this isn't a duplicate
@@ -189,7 +189,7 @@ EOM
 
     list($status, $rows, $record) = ona_get_dhcp_option_entry_record($search);
     if ($status or $rows) {
-        printmsg("DEBUG => That DHCP option, {$type['display_name']}, is already defined!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => That DHCP option, {$type['display_name']}, is already defined!",3);
         $self['error'] = "ERROR => That DHCP option ({$type['display_name']}) is already defined!";
         return(array(11, $self['error'] . "\n"));
     }
@@ -199,7 +199,7 @@ EOM
     // Check permissions
     if (!auth('advanced') or !authlvl($lvl)) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -207,10 +207,10 @@ EOM
     $id = ona_get_next_id('dhcp_option_entries');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => dhcp_entry_add(): New ID: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_add(): New ID: $id", 3);
 
     // Add the record
     list($status, $rows) =
@@ -228,13 +228,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_entry_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(7, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => DHCP entry ADDED: {$type['display_name']}={$dhcp_option_value} on {$desc} ";
-    printmsg($self['error'], 0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -276,7 +276,7 @@ function dhcp_entry_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => dhcp_entry_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -316,13 +316,13 @@ EOM
     if (is_numeric($options['id'])) {
 
         // Debugging
-        printmsg("DEBUG => DHCP entry ID selected: {$options['id']}", 3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => DHCP entry ID selected: {$options['id']}", 3);
 
         list($status, $tmp_rows, $entry) = ona_get_dhcp_option_entry_record(array('id' => $options['id']));
 
         // Test to see that we were able to find the specified record
         if (!$entry['id']) {
-            printmsg("DEBUG => Unable to find the DHCP entry record using ID {$options['id']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP entry record using ID {$options['id']}!",3);
             $self['error'] = "ERROR => Unable to find the DHCP entry record using ID {$options['id']}!";
             return(array(4, $self['error']. "\n"));
          }
@@ -337,12 +337,12 @@ EOM
 
             // Bail out if you cant find a host
             if (!$host['id']) {
-                printmsg("DEBUG => The ID specified, {$search}, does not exist!",3);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The ID specified, {$search}, does not exist!",3);
                 $self['error'] = "ERROR => The ID specified, {$search}, does not exist!";
                 return(array(3, $self['error']. "\n"));
             }
 
-            printmsg("DEBUG => dhcp_entry_del(): Using host: {$host['fqdn']} ID: {$host['id']}", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_del(): Using host: {$host['fqdn']} ID: {$host['id']}", 3);
             $desc = $host['fqdn'];
             $lvl = $host['lvl'];
 
@@ -351,19 +351,19 @@ EOM
             list($status, $rows, $subnet) = ona_find_subnet($entry['subnet_id']);
 
             if (!$subnet['id']) {
-                printmsg("DEBUG => The subnet specified, {$options['subnet']}, does not exist!", 3);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The subnet specified, {$options['subnet']}, does not exist!", 3);
                 $self['error'] = "ERROR => The subnet specified, {$options['subnet']}, does not exist!";
                 return(array(3, $self['error'] . "\n"));
             }
 
-            printmsg("DEBUG => dhcp_entry_del(): Using subnet: {$subnet['name']} ID: {$subnet['id']}", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_del(): Using subnet: {$subnet['name']} ID: {$subnet['id']}", 3);
             $desc = "{$subnet['name']} (". ip_mangle($subnet['ip_addr']).")";
             $lvl = $subnet['lvl'];
 
         }
 
     } else {
-            printmsg("DEBUG => {$options['id']} is not a numeric value", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$options['id']} is not a numeric value", 3);
             $self['error'] = "ERROR => {$options['id']} is not a numeric value";
             return(array(15, $self['error'] . "\n"));
     }
@@ -375,20 +375,20 @@ EOM
         // Check permissions
         if (!auth('advanced') or !authlvl($lvl)) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'dhcp_option_entries', array('id' => $entry['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => dhcp_entry_del() SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(4, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => DHCP entry DELETED: {$entry['display_name']}={$entry['value']} from {$desc} ";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -450,7 +450,7 @@ function dhcp_entry_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.04';
 
-    printmsg("DEBUG => dhcp_entry_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_modify({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -495,12 +495,12 @@ EOM
     // Determine the entry itself exists
     list($status, $rows, $entry) = ona_get_dhcp_option_entry_record(array('id' => $options['id']));
     if ($status or !$rows) {
-        printmsg("DEBUG => Invalid DHCP entry record ID ({$options['id']})!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Invalid DHCP entry record ID ({$options['id']})!",3);
         $self['error'] = "ERROR => Invalid DHCP entry record ID ({$options['id']})!";
         return(array(2, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => dhcp_entry_modify(): Found entry, {$entry['display_name']} => {$entry['value']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_modify(): Found entry, {$entry['display_name']} => {$entry['value']}", 3);
     $desc='';
     // Load associated host, subnet or server record
     $host = $subnet = $server = array();
@@ -523,7 +523,7 @@ EOM
     if ($subnet['id']) $lvl = $subnet['lvl'];
     if (!auth('advanced') or (!authlvl($lvl))) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -540,7 +540,7 @@ EOM
         // trim leading and trailing whitespace from 'value' and check that a value exists
         $SET['value'] = trim($options['set_value']);
         if (strlen($SET['value']) == 0 ) {
-            printmsg("DEBUG => The DHCP value was blank",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The DHCP value was blank",3);
             $self['error'] = "ERROR => DHCP value was blank";
             return(array(2, $self['error'] . "\n"));
         }
@@ -551,7 +551,7 @@ EOM
     if ($options['set_option']) {
         // Make sure they specified a value
         if (!array_key_exists('set_value', $options)) {
-            printmsg("DEBUG => No value specified for given DHCP parameter type ({$options['set_option']})!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No value specified for given DHCP parameter type ({$options['set_option']})!", 3);
             $self['error'] = "ERROR => No value specified for given DHCP parameter type ({$options['set_option']})!";
             return(array(8, $self['error'] . "\n"));
         }
@@ -559,12 +559,12 @@ EOM
         // Determine the type is valid
         list($status, $rows, $type) = ona_find_dhcp_option(trim($options['set_option']));
         if ($status or !$rows) {
-            printmsg("DEBUG => Invalid DHCP parameter type specified ({$options['set_option']})!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Invalid DHCP parameter type specified ({$options['set_option']})!", 3);
             $self['error'] = "ERROR => Invalid DHCP parameter type specified ({$options['set_option']})!";
             return(array(8, $self['error'] . "\n"));
         }
 
-        printmsg("DEBUG => dhcp_entry_modify(): Found parameter type {$type['display_name']}", 3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_modify(): Found parameter type {$type['display_name']}", 3);
 
         $SET['dhcp_option_id'] = $type['id'];
 
@@ -576,7 +576,7 @@ EOM
         if ($server['id']) $search['server_id'] = $server['id'];
         list($status, $rows, $record) = ona_get_dhcp_option_entry_record($search);
         if ($status or $rows > 1 or ($rows == 1 and $record['id'] != $entry['id']) ) {
-            printmsg("DEBUG => That DHCP parameter type is already defined ({$search})!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => That DHCP parameter type is already defined ({$search})!", 3);
             $self['error'] = "ERROR => That DHCP parameter type is already defined ({$search})!";
             return(array(11, $self['error'] . "\n"));
         }
@@ -590,7 +590,7 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'dhcp_option_entries', array('id' => $entry['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_entry_modify() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
 
@@ -612,8 +612,8 @@ EOM
 
     // only print to logfile if a change has been made to the record
     if($more != '') {
-        printmsg($self['error'], 0);
-        printmsg($log_msg, 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
     }
 
     return(array(0, $self['error'] . "\n"));
@@ -660,7 +660,7 @@ function dhcp_entry_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => dhcp_entry_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -697,7 +697,7 @@ EOM
         list($status, $rows, $host) = ona_find_host($options['host']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The host specified, {$options['host']}, does not exist!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$options['host']}, does not exist!", 3);
             $self['error'] = "ERROR => The host specified, {$options['host']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -710,7 +710,7 @@ EOM
         list($status, $rows, $subnet) = ona_find_subnet($options['subnet']);
 
         if (!$subnet['id']) {
-            printmsg("DEBUG => The subnet specified, {$options['subnet']}, does not exist!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The subnet specified, {$options['subnet']}, does not exist!", 3);
             $self['error'] = "ERROR => The subnet specified, {$options['subnet']}, does not exist!";
             return(array(3, $self['error'] . "\n"));
         }
@@ -724,7 +724,7 @@ EOM
         list($status, $rows, $host) = ona_find_host($options['server']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The server specified, {$options['server']}, does not exist!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['server']}, does not exist!", 3);
             $self['error'] = "ERROR => The server specified, {$options['server']}, does not exist!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -733,7 +733,7 @@ EOM
         list($status, $rows, $server) = ona_get_server_record(array('HOST_id' => $host['id']));
 
         if (!$server['id']) {
-            printmsg("DEBUG => The host specified, {$host['FQDN']}, is not a server!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$host['FQDN']}, is not a server!", 3);
             $self['error'] = "ERROR => The host specified, {$host['FQDN']}, is not a server!";
             return(array(5, $self['error'] . "\n"));
         }
@@ -746,7 +746,7 @@ EOM
 
 
     // Debugging
-    printmsg("DEBUG => dhcp_entry_display(): Found {$anchor}: {$desc}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_entry_display(): Found {$anchor}: {$desc}", 3);
 
 
 

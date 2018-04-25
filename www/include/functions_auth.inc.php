@@ -41,13 +41,13 @@ function load_auth_class($authtype='') {
                 // degrade to unauthenticated user
                 unset($auth);
                 unset($_SESSION['ona']['auth']);
-                printmsg("ERROR => Failure loading auth module: {$conf['authtype']}.", 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failure loading auth module: {$conf['authtype']}.", 0);
             }
         } else {
-            printmsg("ERROR => Unable to find auth class: {$auth_class}.", 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Unable to find auth class: {$auth_class}.", 0);
         }
     } else {
-        printmsg("ERROR => Auth module {$authtype} not in path: ".ONA_AUTH, 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Auth module {$authtype} not in path: ".ONA_AUTH, 0);
     }
     return($auth);
 }
@@ -70,14 +70,14 @@ function get_authentication($login_name='', $login_password='') {
     // Validate the userid was passed and is "clean"
     if (!preg_match('/^[A-Za-z0-9.\-_]+$/', $login_name)) {
         $js = "el('loginmsg').innerHTML = 'Bad username format';";
-        printmsg("ERROR => Login failure for {$login_name}: Bad username format", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Login failure for {$login_name}: Bad username format", 0);
         return(array(1, $js));
     }
 
 
     // Force guest logins to only use local auth module
     if ($login_name == 'guest') {
-        printmsg("DEBUG => Guest user login, forcing local auth.",1);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Guest user login, forcing local auth.",1);
         // create new authentication class
         $auth = load_auth_class('local');
         $conf['authtype']='local';
@@ -93,12 +93,12 @@ function get_authentication($login_name='', $login_password='') {
     if ($auth->founduser === false) {
         // Fall back to local database to see if we have something there
         if ($conf['authtype'] != 'local') {
-            printmsg("DEBUG => Unable to find user via auth_{$conf['authtype']}, falling back to local auth_local.",1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find user via auth_{$conf['authtype']}, falling back to local auth_local.",1);
             $auth = load_auth_class('local');
             $authresult = $auth->checkPass($login_name,$login_password);
             if ($auth->founduser === false) {
                 $js = "el('loginmsg').innerHTML = 'Unknown user';";
-                printmsg("ERROR => Login failure for {$login_name}: Unknown user", 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Login failure for {$login_name}: Unknown user", 0);
                 return(array(1, $js));
             }
             // override the system configured authtype for now
@@ -109,12 +109,12 @@ function get_authentication($login_name='', $login_password='') {
     // If we do not get a positive authentication of user/pass then fail
     if ($authresult === false) {
         $js = "el('loginmsg').innerHTML = 'Password incorrect';";
-        printmsg("ERROR => Login failure for {$login_name} using authtype {$conf['authtype']}: Password incorrect", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Login failure for {$login_name} using authtype {$conf['authtype']}: Password incorrect", 0);
         return(array(1, $js));
     }
 
     // If the password is good.. return success.
-    printmsg("INFO => Authentication Successful for {$login_name} using authtype: {$conf['authtype']}", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Authentication Successful for {$login_name} using authtype: {$conf['authtype']}", 1);
     return(array(0, $js));
 }
 
@@ -137,11 +137,11 @@ function get_perms($login_name='') {
     $groups = array();
     $permissions = array();
 
-    printmsg("INFO => Authorization Starting for {$login_name}", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Authorization Starting for {$login_name}", 1);
 
     // get user information and groups from the previously populated auth class
     $userinfo = $auth->getUserData($login_name);
-    if ($userinfo === false) printmsg("INFO => Failed to get user information for user: {$login_name}", 0);
+    if ($userinfo === false) printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Failed to get user information for user: {$login_name}", 0);
 
     // If this is the local auth type, check local user permissions
     // MP: This code should not be here but there is really not a better spot.
@@ -174,7 +174,7 @@ function get_perms($login_name='') {
     $_SESSION['ona']['auth']['perms']  = $permissions;
 
     // Log that the user logged in
-    printmsg("INFO => Loaded permissions for " . $login_name, 2);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Loaded permissions for " . $login_name, 2);
     return true;
 
 }
@@ -280,7 +280,7 @@ function auth_cryptPassword($clear,$method='',$salt=null){
             $hash2 = substr($hash1, 0, 16) . $key . substr($hash1, 16);
             return $hash2;
         default:
-            printmsg("Unsupported crypt method $method",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "Unsupported crypt method $method",0);
     }
 }
 

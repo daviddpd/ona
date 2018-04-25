@@ -22,7 +22,7 @@
 ///////////////////////////////////////////////////////////////////////
 function mangle_ip($options) {
     global $conf, $self;
-    printmsg('DEBUG => mangle_ip('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => mangle_ip('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';

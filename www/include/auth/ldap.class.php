@@ -34,7 +34,7 @@ class auth_ldap extends auth_local {
         // ldap extension is needed
         if(!function_exists('ldap_connect')) {
             if ($this->cnf['debug'])
-                printmsg("ERROR => auth_ldap err: PHP LDAP extension not found.",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => auth_ldap err: PHP LDAP extension not found.",0);
             $this->success = false;
             return;
         }
@@ -64,7 +64,7 @@ class auth_ldap extends auth_local {
             // use superuser credentials
             if(!@ldap_bind($this->con,$this->cnf['binddn'],$this->cnf['bindpw'])){
                 if($this->cnf['debug'])
-                    printmsg('DEBUG => auth_ldap: LDAP bind as superuser: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP bind as superuser: '.htmlspecialchars(ldap_error($this->con)),1);
                 return false;
             }
             $this->bound = 2;
@@ -83,21 +83,21 @@ class auth_ldap extends auth_local {
         }else{
             // Anonymous bind
             if(!@ldap_bind($this->con)){
-                printmsg("ERROR => auth_ldap: can not bind anonymously",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => auth_ldap: can not bind anonymously",0);
                 if($this->cnf['debug'])
-                    printmsg('DEBUG => auth_ldap: LDAP anonymous bind: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP anonymous bind: '.htmlspecialchars(ldap_error($this->con)),1);
                 return false;
             }
         }
 
         // Try to bind to with the dn if we have one.
         if(!empty($dn)) {
-            printmsg("DEBUG => auth_ldap: binding with DN: $dn", 5);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => auth_ldap: binding with DN: $dn", 5);
             // User/Password bind
             if(!@ldap_bind($this->con,$dn,$pass)){
                 if($this->cnf['debug']){
-                    printmsg("ERROR => auth_ldap: bind with $dn failed", 1);
-                    printmsg('DEBUG => auth_ldap: LDAP user dn bind: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => auth_ldap: bind with $dn failed", 1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP user dn bind: '.htmlspecialchars(ldap_error($this->con)),1);
                 }
                 return false;
             }
@@ -116,8 +116,8 @@ class auth_ldap extends auth_local {
             // Try to bind with the dn provided
             if(!@ldap_bind($this->con,$dn,$pass)){
                 if($this->cnf['debug']){
-                    printmsg("ERROR => auth_ldap: bind with $dn failed", 1);
-                    printmsg('DEBUG => auth_ldap: LDAP user bind: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => auth_ldap: bind with $dn failed", 1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP user bind: '.htmlspecialchars(ldap_error($this->con)),1);
                 }
                 return false;
             }
@@ -162,7 +162,7 @@ class auth_ldap extends auth_local {
             // use superuser credentials
             if(!@ldap_bind($this->con,$this->cnf['binddn'],$this->cnf['bindpw'])){
                 if($this->cnf['debug'])
-                    printmsg('DEBUG => auth_ldap: LDAP bind as superuser: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP bind as superuser: '.htmlspecialchars(ldap_error($this->con)),1);
                 return false;
             }
             $this->bound = 2;
@@ -189,8 +189,8 @@ class auth_ldap extends auth_local {
         $sr     = @ldap_search($this->con, $base, $filter);
         $result = @ldap_get_entries($this->con, $sr);
         if($this->cnf['debug']){
-            printmsg('DEBUG => auth_ldap: LDAP user search: '.htmlspecialchars(ldap_error($this->con)),1);
-            printmsg('DEBUG => auth_ldap: LDAP search at: '.htmlspecialchars($base.' '.$filter),1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP user search: '.htmlspecialchars(ldap_error($this->con)),1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP search at: '.htmlspecialchars($base.' '.$filter),1);
         }
 
         // Don't accept more or less than one response
@@ -238,10 +238,10 @@ class auth_ldap extends auth_local {
             $filter = $this->_makeFilter($this->cnf['groupfilter'], $user_result);
             $sr = @ldap_search($this->con, $base, $filter, array($this->cnf['groupkey']));
             if(!$sr){
-                printmsg("ERROR => auth_ldap: Reading group memberships failed",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => auth_ldap: Reading group memberships failed",0);
                 if($this->cnf['debug']){
-                    printmsg('DEBUG => auth_ldap: LDAP group search: '.htmlspecialchars(ldap_error($this->con)),1);
-                    printmsg('DEBUG => auth_ldap: LDAP search at: '.htmlspecialchars($base.' '.$filter),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP group search: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP search at: '.htmlspecialchars($base.' '.$filter),1);
                 }
                 return false;
             }
@@ -251,7 +251,7 @@ class auth_ldap extends auth_local {
             if(is_array($result)) foreach($result as $grp){
                 if(!empty($grp[$this->cnf['groupkey']][0])){
                     if($this->cnf['debug'])
-                        printmsg('DEBUG => auth_ldap: LDAP usergroup: '.htmlspecialchars($grp[$this->cnf['groupkey']][0]),2);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP usergroup: '.htmlspecialchars($grp[$this->cnf['groupkey']][0]),2);
                     $info['grps'][$grp[$this->cnf['groupkey']][0]] = $g++;
                 }
             }
@@ -327,7 +327,7 @@ class auth_ldap extends auth_local {
         $port = ($this->cnf['port']) ? $this->cnf['port'] : 389;
         $this->con = @ldap_connect($this->cnf['server'],$port);
         if(!$this->con){
-            printmsg("ERROR => auth_ldap: couldn't connect to LDAP server",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => auth_ldap: couldn't connect to LDAP server",0);
             return false;
         }
 
@@ -335,25 +335,25 @@ class auth_ldap extends auth_local {
         if($this->cnf['version']){
             if(!@ldap_set_option($this->con, LDAP_OPT_PROTOCOL_VERSION,
                                  $this->cnf['version'])){
-                printmsg('ERROR => auth_ldap: Setting LDAP Protocol version '.$this->cnf['version'].' failed',0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => auth_ldap: Setting LDAP Protocol version '.$this->cnf['version'].' failed',0);
                 if($this->cnf['debug'])
-                    printmsg('DEBUG => auth_ldap: LDAP version set: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP version set: '.htmlspecialchars(ldap_error($this->con)),1);
             }else{
                 //use TLS (needs version 3)
                 if($this->cnf['starttls']) {
                     if (!@ldap_start_tls($this->con)){
-                        printmsg('ERROR => auth_ldap: Starting TLS failed',0);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => auth_ldap: Starting TLS failed',0);
                         if($this->cnf['debug'])
-                            printmsg('DEBUG => auth_ldap: LDAP TLS set: '.htmlspecialchars(ldap_error($this->con)),1);
+                            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP TLS set: '.htmlspecialchars(ldap_error($this->con)),1);
                     }
                 }
                 // needs version 3
                 if(isset($this->cnf['referrals'])) {
                     if(!@ldap_set_option($this->con, LDAP_OPT_REFERRALS,
                        $this->cnf['referrals'])){
-                        printmsg('ERROR => auth_ldap: Setting LDAP referrals to off failed',0);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => auth_ldap: Setting LDAP referrals to off failed',0);
                         if($this->cnf['debug'])
-                            printmsg('DEBUG => auth_ldap: LDAP referal set: '.htmlspecialchars(ldap_error($this->con)),1);
+                            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP referal set: '.htmlspecialchars(ldap_error($this->con)),1);
                     }
                 }
             }
@@ -362,9 +362,9 @@ class auth_ldap extends auth_local {
         //set deref mode
         if($this->cnf['deref']){
             if(!@ldap_set_option($this->con, LDAP_OPT_DEREF, $this->cnf['deref'])){
-                printmsg('ERROR => auth_ldap: Setting LDAP Deref mode '.$this->cnf['deref'].' failed',0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => auth_ldap: Setting LDAP Deref mode '.$this->cnf['deref'].' failed',0);
                 if($this->cnf['debug'])
-                    printmsg('DEBUG => auth_ldap: LDAP deref set: '.htmlspecialchars(ldap_error($this->con)),1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => auth_ldap: LDAP deref set: '.htmlspecialchars(ldap_error($this->con)),1);
             }
         }
 

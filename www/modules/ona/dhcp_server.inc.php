@@ -30,7 +30,7 @@ function dhcp_server_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => dhcp_server_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_server_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -68,18 +68,18 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$subnet['id']) {
-        printmsg("DEBUG => Unable to find the subnet record using {$options['subnet']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the subnet record using {$options['subnet']}!",3);
         $self['error'] = "ERROR => Unable to find the subnet record using {$options['subnet']}!";
         return(array(4, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => dhcp_server_add(): Found subnet, {$subnet['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_server_add(): Found subnet, {$subnet['name']}", 3);
 
     // Determine the server is valid
     list($status, $rows, $host) = ona_find_host($options['server']);
 
     if (!$host['id']) {
-        printmsg("DEBUG => The server ({$options['server']}) does not exist!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server ({$options['server']}) does not exist!",3);
         $self['error'] = "ERROR => The server specified, {$options['server']}, does not exist!";
         return(array(2, $self['error'] . "\n"));
     }
@@ -87,14 +87,14 @@ EOM
     // Check permissions
     if (!auth('advanced') or !authlvl($host['LVL']) or !authlvl($subnet['LVL'])) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(12, $self['error'] . "\n"));
     }
 
     // Test that this subnet isnt already assigned to the server
     list($status, $rows, $dhcpserver) = ona_get_dhcp_server_subnet_record(array('host_id' => $host['id'],'subnet_id' => $subnet['id']));
     if ($rows) {
-        printmsg("DEBUG => Subnet {$subnet['name']} already assigned to {$host['fqdn']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Subnet {$subnet['name']} already assigned to {$host['fqdn']}",3);
         $self['error'] = "ERROR => Subnet {$subnet['name']} already assigned to {$host['fqdn']}";
         return(array(11, $self['error'] . "\n"));
     }
@@ -104,11 +104,11 @@ EOM
     $id = ona_get_next_id('dhcp_server_subnets');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $add_to_error . $self['error'] . "\n"));
     }
 
-    printmsg("DEBUG => dhcp_server_add(): New dhcp server subnet ID: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_server_add(): New dhcp server subnet ID: $id", 3);
 
     // Add new record to dhcp_server_subnets_b
     list($status, $rows) =
@@ -123,14 +123,14 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_server_add() SQL Query failed:" . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(8, $add_to_error . $self['error'] . "\n"));
     }
 
 
     // Return the success notice
     $self['error'] = "INFO => DHCP Subnet/Server Pair ADDED: {$subnet['name']}/{$host['fqdn']} ";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $add_to_error . $self['error'] . "\n"));
 
 
@@ -165,7 +165,7 @@ function dhcp_server_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.03';
 
-    printmsg("DEBUG => dhcp_server_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_server_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -208,30 +208,30 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$subnet['id']) {
-        printmsg("DEBUG => Unable to find the subnet record using {$options['subnet']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the subnet record using {$options['subnet']}!",3);
         $self['error'] = "ERROR => Unable to find the subnet record using {$options['subnet']}!";
         return(array(4, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => dhcp_server_del(): Found subnet, {$subnet['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_server_del(): Found subnet, {$subnet['name']}", 3);
 
     if ($options['server']) {
         // Determine the server is valid
         list($status, $rows, $host) = ona_find_host($options['server']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The server ({$options['server']}) does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server ({$options['server']}) does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
     }
 
-    //printmsg("DEBUG => dhcp_server_del(): Found server, {$host['FQDN']}", 3);
+    //printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_server_del(): Found server, {$host['FQDN']}", 3);
 
     // Test that this subnet is even assigned to the server
     list($status, $rows, $dhcpserver) = ona_get_dhcp_server_subnet_record(array('host_id' => $host['id'],'subnet_id' => $subnet['id']));
     if (!$rows) {
-        printmsg("DEBUG => Unable to find {$subnet['name']} on server {$host['fqdn']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find {$subnet['name']} on server {$host['fqdn']}",3);
         $self['error'] = "ERROR => Unable to find {$subnet['name']} on server {$host['fqdn']}";
         return(array(11, $self['error'] . "\n"));
     }
@@ -243,7 +243,7 @@ EOM
         // Check permissions
         if (!auth('advanced') or !authlvl($host['LVL']) or !authlvl($subnet['LVL'])) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
@@ -264,7 +264,7 @@ EOM
 
                 // if a subnet/server pair is found in dhcp pools, don't allow removal
                 if ($foundfg > 0) {
-                    printmsg("DEBUG => Subnet ({$subnet['name']}) has a pool assigned to this Server ({$host['fqdn']}), which is part of a failover group.  The server must be removed from the failover group first.",3);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Subnet ({$subnet['name']}) has a pool assigned to this Server ({$host['fqdn']}), which is part of a failover group.  The server must be removed from the failover group first.",3);
                     $self['error'] = "ERROR => Subnet ({$subnet['name']}) has a pool assigned to this Server ({$host['fqdn']}), which is part of a failover group.  The server must be removed from the failover group first.";
                     return(array(12, $self['error'] . "\n"));
                 }
@@ -286,7 +286,7 @@ EOM
 // 
 //             // If this is the last DHCP server that services this subnet, don't allow removal until DHCP parameters are removed
 //             if($rows <= 1){
-//                 printmsg("DEBUG => Subnet ({$subnet['name']}) has DHCP parameters assigned which need to be removed first",3);
+//                 printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Subnet ({$subnet['name']}) has DHCP parameters assigned which need to be removed first",3);
 //                 $self['error'] = "ERROR => Subnet ({$subnet['name']}) has DHCP parameters assigned which need to be removed first";
 //                 return(array(12, $self['error'] . "\n"));
 //             }
@@ -297,14 +297,14 @@ EOM
         list($status, $rows) = db_delete_records($onadb, 'dhcp_server_subnets', array('id' => $dhcpserver['id']));
         if ($status) {
             $self['error'] = "ERROR => dhcp_server_del() SQL Query failed:" . $self['error'];
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(9, $self['error'] . "\n"));
         }
 
 
         // Return the success notice
         $self['error'] = "INFO => DHCP Subnet/Server Pair DELETED: {$subnet['name']}/{$host['fqdn']} ";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 

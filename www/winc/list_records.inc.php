@@ -33,7 +33,7 @@ function ws_display_list($window_name, $form='') {
         $_SESSION['ona'][$form['form_id']][$tab]['page'] = $page = $form['page'];
         $_SESSION['ona'][$form['form_id']][$tab]['filter'] = $form['filter'];
     }
-    printmsg("DEBUG => Displaying records list page: {$page}", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying records list page: {$page}", 1);
 
     // Calculate the SQL query offset (based on the page being displayed)
     $offset = ($conf['search_results_per_page'] * ($page - 1));

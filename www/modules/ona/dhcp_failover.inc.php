@@ -47,7 +47,7 @@ $conf['dhcp_split'] = '255';
 ///////////////////////////////////////////////////////////////////////
 function dhcp_failover_group_add($options="") {
     global $conf, $self, $onadb;
-    printmsg("DEBUG => dhcp_failover_group_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_add({$options}) called", 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';
@@ -104,7 +104,7 @@ EOM
         list($status, $rows, $pri_server) = ona_find_host($options['pri_server']);
 
         if (!$pri_server['id']) {
-            printmsg("DEBUG => The server specified, {$options['pri_server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['pri_server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['pri_server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -114,7 +114,7 @@ EOM
 /*        list($status, $rows, $pri_server) = ona_get_server_record(array('host_id' => $pri_host['id']));
 
         if (!$pri_server['id']) {
-            printmsg("DEBUG => The host specified, {$pri_host['fqdn']}, is not a server!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$pri_host['fqdn']}, is not a server!",3);
             $self['error'] = "ERROR => The host specified, {$pri_host['fqdn']}, is not a server!";
             return(array(5, $self['error'] . "\n"));
         }*/
@@ -125,7 +125,7 @@ EOM
         list($status, $rows, $sec_server) = ona_find_host($options['sec_server']);
 
         if (!$sec_server['id']) {
-            printmsg("DEBUG => The server specified, {$options['sec_server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['sec_server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['sec_server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -135,7 +135,7 @@ EOM
 /*        list($status, $rows, $sec_server) = ona_get_server_record(array('HOST_id' => $sec_host['id']));
 
         if (!$sec_server['id']) {
-            printmsg("DEBUG => The host specified, {$sec_host['fqdn']}, is not a server!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$sec_host['fqdn']}, is not a server!",3);
             $self['error'] = "ERROR => The host specified, {$sec_host['fqdn']}, is not a server!";
             return(array(5, $self['error'] . "\n"));
         }*/
@@ -144,7 +144,7 @@ EOM
 
     // The pri/sec server can not be the same
     if ($pri_server['id'] == $sec_server['id']) {
-        printmsg("DEBUG => The primary server and the secondary server cannot be the same ({$pri_host['fqdn']}).",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The primary server and the secondary server cannot be the same ({$pri_host['fqdn']}).",3);
         $self['error'] = "ERROR => The primary server and the secondary server cannot be the same ({$pri_host['fqdn']}).";
         return(array(9, $self['error'] . "\n"));
     }
@@ -163,7 +163,7 @@ EOM
     }
 
     if ($rows) {
-        printmsg("DEBUG => A failover group using, {$options['pri_server']} and {$options['sec_server']}, already exists!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => A failover group using, {$options['pri_server']} and {$options['sec_server']}, already exists!",3);
         $self['error'] = "ERROR => A failover group using, {$options['pri_server']} and {$options['sec_server']}, already exists!";
         return(array(11, $self['error'] . "\n"));
     }
@@ -184,7 +184,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -192,10 +192,10 @@ EOM
     $first_id = $id = ona_get_next_id('dhcp_failover_groups');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => dhcp_failover_group_add(): New failover group id: {$id}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_add(): New failover group id: {$id}", 3);
 
 
     // Add the record
@@ -218,13 +218,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_failover_group_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(7, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => DHCP failover group ADDED: {$id} => PRI:{$pri_host['fqdn']} SEC:{$sec_host['fqdn']}";
-    printmsg($self['error'], 0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -260,7 +260,7 @@ EOM
 ///////////////////////////////////////////////////////////////////////
 function dhcp_failover_group_del($options="") {
     global $conf, $self, $onadb;
-    printmsg("DEBUG => dhcp_failover_group_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_del({$options}) called", 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';
@@ -298,19 +298,19 @@ EOM
     // Test that the group actually exists.
     list($status, $tmp_rows, $entry) = ona_get_dhcp_failover_group_record(array('id' => $options['id']));
     if (!$entry['id']) {
-        printmsg("DEBUG => Unable to find a DHCP failover group record using id {$options['id']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a DHCP failover group record using id {$options['id']}!",3);
         $self['error'] = "ERROR => Unable to find a DHCP failover group record using id {$options['id']}!";
         return(array(4, $self['error']. "\n"));
     }
 
     // Debugging
-    printmsg("DEBUG => DHCP failover group selected: {$entry['id']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => DHCP failover group selected: {$entry['id']}", 3);
 
 
     // Display an error if pools are using this zone
     list($status, $rows, $pool) = db_get_record($onadb, 'dhcp_pools', array('id' => $entry['id']));
     if ($rows) {
-        printmsg("DEBUG => DHCP failover group ({$entry['id']}) can't be deleted, it is in use on 1 or more pools!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => DHCP failover group ({$entry['id']}) can't be deleted, it is in use on 1 or more pools!",3);
         $self['error'] = "ERROR => DHCP failover group ({$entry['id']}) can't be deleted, it is in use on 1 or more pools!";
         return(array(5, $self['error'] . "\n"));
     }
@@ -326,7 +326,7 @@ EOM
         // Check permissions
         if (!auth('advanced')) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
@@ -335,14 +335,14 @@ EOM
         list($status, $rows) = db_delete_records($onadb, 'dhcp_failover_groups', array('id' => $entry['id']));
         if ($status) {
             $self['error'] = "ERROR => dhcp_failover_group_del() SQL Query failed: {$self['error']}";
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(9, $self['error'] . "\n"));
         }
 
 
         // Return the success notice
         $self['error'] = "INFO => DHCP failover group DELETED: {$entry['id']} => PRI:{$pri_host['fqdn']} SEC:{$sec_host['fqdn']}";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -402,7 +402,7 @@ EOL;
 ///////////////////////////////////////////////////////////////////////
 function dhcp_failover_group_modify($options="") {
     global $conf, $self, $onadb;
-    printmsg("DEBUG => dhcp_failover_group_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_modify({$options}) called", 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';
@@ -461,7 +461,7 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$failovergroup['id']) {
-        printmsg("DEBUG => Unable to find the DHCP failover group record using {$options['id']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP failover group record using {$options['id']}!",3);
         $self['error'] = "ERROR => Unable to find the DHCP failover group record using {$options['id']}!";
         return(array(4, $self['error']. "\n"));
     }
@@ -471,7 +471,7 @@ EOM
 
 
     // Debugging
-    printmsg("DEBUG => dhcp_failover_group_display(): Found id:{$failovergroup['id']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_display(): Found id:{$failovergroup['id']}", 3);
 
 
     // This variable will contain the updated info we'll insert into the DB
@@ -484,7 +484,7 @@ EOM
         list($status, $rows, $pri_host) = ona_find_host($options['set_pri_server']);
 
         if (!$pri_host['id']) {
-            printmsg("DEBUG => The server specified, {$options['set_pri_server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['set_pri_server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['set_pri_server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -494,7 +494,7 @@ EOM
 //         list($status, $rows, $pri_server) = ona_get_server_record(array('host_id' => $pri_host['id']));
 // 
 //         if (!$pri_server['id']) {
-//             printmsg("DEBUG => The host specified, {$pri_host['fqdn']}, is not a server!",3);
+//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$pri_host['fqdn']}, is not a server!",3);
 //             $self['error'] = "ERROR => The host specified, {$pri_host['fqdn']}, is not a server!";
 //             return(array(5, $self['error'] . "\n"));
 //         }
@@ -509,7 +509,7 @@ EOM
         list($status, $rows, $sec_host) = ona_find_host($options['set_sec_server']);
 
         if (!$sec_host['id']) {
-            printmsg("DEBUG => The server specified, {$options['set_sec_server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['set_sec_server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['set_sec_server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -519,7 +519,7 @@ EOM
 //         list($status, $rows, $sec_server) = ona_get_server_record(array('host_id' => $sec_host['id']));
 // 
 //         if (!$sec_server['id']) {
-//             printmsg("DEBUG => The host specified, {$sec_host['fqdn']}, is not a server!",3);
+//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$sec_host['fqdn']}, is not a server!",3);
 //             $self['error'] = "ERROR => The host specified, {$sec_host['fqdn']}, is not a server!";
 //             return(array(5, $self['error'] . "\n"));
 //         }
@@ -544,7 +544,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -555,7 +555,7 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'dhcp_failover_groups', array('id' => $failovergroup['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_failover_group_modify() SQL Query failed: {$self['error']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
 
@@ -577,8 +577,8 @@ EOM
 
     // only print to logfile if a change has been made to the record
     if($more != '') {
-        printmsg($self['error'], 0);
-        printmsg($log_msg, 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
     }
 
     return(array(0, $self['error'] . "\n"));
@@ -618,7 +618,7 @@ function dhcp_failover_group_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => dhcp_failover_group_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -656,7 +656,7 @@ EOM
         list($status, $rows, $pri_host) = ona_find_host($options['pri_server']);
 
         if (!$pri_host['id']) {
-            printmsg("DEBUG => The server specified, {$options['pri_server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['pri_server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['pri_server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -666,7 +666,7 @@ EOM
 //         list($status, $rows, $pri_server) = ona_get_server_record(array('host_id' => $pri_host['id']));
 // 
 //         if (!$pri_server['id']) {
-//             printmsg("DEBUG => The host specified, {$pri_host['FQDN']}, is not a server!",3);
+//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$pri_host['FQDN']}, is not a server!",3);
 //             $self['error'] = "ERROR => The host specified, {$pri_host['FQDN']}, is not a server!";
 //             return(array(5, $self['error'] . "\n"));
 //         }
@@ -675,7 +675,7 @@ EOM
         list($status, $rows, $sec_host) = ona_find_host($options['sec_server']);
 
         if (!$sec_host['id']) {
-            printmsg("DEBUG => The server specified, {$options['sec_server']}, does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server specified, {$options['sec_server']}, does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['sec_server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -685,7 +685,7 @@ EOM
 //         list($status, $rows, $sec_server) = ona_get_server_record(array('HOST_id' => $sec_host['id']));
 // 
 //         if (!$sec_server['id']) {
-//             printmsg("DEBUG => The host specified, {$sec_host['fqdn']}, is not a server!",3);
+//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The host specified, {$sec_host['fqdn']}, is not a server!",3);
 //             $self['error'] = "ERROR => The host specified, {$sec_host['fqdn']}, is not a server!";
 //             return(array(5, $self['error'] . "\n"));
 //         }
@@ -706,7 +706,7 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$failovergroup['id']) {
-        printmsg("DEBUG => Unable to find the DHCP failover group record using {$options['id']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP failover group record using {$options['id']}!",3);
         $self['error'] = "ERROR => Unable to find the DHCP failover group record using {$options['id']}!";
         return(array(4, $self['error']. "\n"));
     }
@@ -719,7 +719,7 @@ EOM
 
 
     // Debugging
-    printmsg("DEBUG => dhcp_failover_group_display(): Found id:{$failovergroup['id']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_failover_group_display(): Found id:{$failovergroup['id']}", 3);
 
 
     // Build text to return

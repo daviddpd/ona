@@ -301,11 +301,11 @@ function ws_delete($window_name, $form='') {
     if ($status != 0) {
         $js .= "alert('Delete failed');";
         $self['error'] = "ERROR => user_list delete ws_save() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     }
     else {
         $self['error'] = "INFO => User DELETED: {$user['username']} ";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         // Refresh the current list of users.. it's changed!
         $js .= "xajax_window_submit('$window_name', xajax.getFormValues('{$window_name}_filter_form'), 'display_list');";
     }

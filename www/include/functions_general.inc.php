@@ -4,8 +4,8 @@
 
 // Debugging: lets print what's in $_REQUEST
 if ( 6 <= $conf['debug'] ) {
-  printmsg("Get/Post vars:", 6);
-  foreach (array_keys($_REQUEST) as $key) printmsg("Name: $key    Value: $_REQUEST[$key]", 6);
+  printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "Get/Post vars:", 6);
+  foreach (array_keys($_REQUEST) as $key) printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "Name: $key    Value: $_REQUEST[$key]", 6);
 }
 
 // MP: moved this stuff to config.inc.php
@@ -45,7 +45,41 @@ if ( 6 <= $conf['debug'] ) {
 //   Prints a message if $level is less than or equal to global debug value
 //
 ///////////////////////////////////////////////////////////////////////
-function printmsg($msg="",$debugLevel=0) {
+
+function pstr($file=NULL, $line=NULL, $function=NULL, $other=NULL ) {
+    global $conf;
+    if ( $conf['debug'] < 16 ) { return ''; }
+    $ret = array ();
+    if (!is_null ($file) ) {
+        $a = pathinfo ( $file );
+        $pathparts = array_reverse ( explode (DIRECTORY_SEPARATOR, $a['dirname'] ) );
+        $path = array ();
+        foreach ( $pathparts as $p ) {
+            if ($p == "ona" ) 
+                break;
+            array_push ($path, $p);
+        }
+        array_push ($path, $a['filename']);
+        array_push ($ret,  implode (DIRECTORY_SEPARATOR, $path) );
+    }
+    if (!is_null ($line) ) {
+        array_push ($ret, $line );
+    }
+    if (!is_null ($function) ) {
+        array_push ($ret, $function . "()" );
+    }
+    
+    $_str = "{" . implode ( "::", $ret) . "}";
+    
+    if (!is_null ($other) ) {
+        $_str = $_str . " {" . $other . "} : ";
+    } else {
+        $_str = $_str . ": ";
+    }
+    return $_str;
+}
+
+function printmg($msg="",$debugLevel=0) {
     global $conf, $self;
 
     if ($debugLevel <= $conf['debug'] and isset($msg)) {
@@ -313,7 +347,7 @@ function ip_mangle($ip="", $format="default") {
         return(ip_mangle_gmp($ip, $format));
     }
     else {
-        printmsg("INFO => Falling back to non GMP enabled ip_mangle function",5);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Falling back to non GMP enabled ip_mangle function",5);
         return(ip_mangle_no_gmp($ip, $format));
     }
 }
@@ -1331,10 +1365,10 @@ function auth($resource,$msg_level=1) {
 
     if (!is_string($resource)) return false;
     if (array_key_exists($resource, (array)$_SESSION['ona']['auth']['perms'])) {
-        printmsg("DEBUG => auth() User[{$_SESSION['ona']['auth']['user']['username']}] has the {$resource} permission",5);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => auth() User[{$_SESSION['ona']['auth']['user']['username']}] has the {$resource} permission",5);
         return true;
     }
-    printmsg("DEBUG => auth() User[{$_SESSION['ona']['auth']['user']['username']}] does not have the {$resource} permission",$msg_level);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => auth() User[{$_SESSION['ona']['auth']['user']['username']}] does not have the {$resource} permission",$msg_level);
     return false;
 }
 
@@ -1349,15 +1383,15 @@ function auth($resource,$msg_level=1) {
 function authlvl($level) {
 
     // FIXME: hack until we get auth stuff working:
-    printmsg("DEBUG => FIXME: authlvl() always returns true for now", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => FIXME: authlvl() always returns true for now", 1);
     return true;
 
     if (!is_numeric($level)) return false;
     if ($_SESSION['ona']['auth']['user']['level'] >= $level) {
-        printmsg("DEBUG => authlvl() {$_SESSION['ona']['auth']['user']['username']}'s level is >= {$level}",1);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => authlvl() {$_SESSION['ona']['auth']['user']['username']}'s level is >= {$level}",1);
         return true;
     }
-    printmsg("DEBUG => authlvl() {$_SESSION['ona']['auth']['user']['username']}'s level is not >= {$level}",1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => authlvl() {$_SESSION['ona']['auth']['user']['username']}'s level is not >= {$level}",1);
     return false;
 }
 
@@ -1502,18 +1536,18 @@ function run_module($module='', $options='', $transaction=1) {
     // The module that is called could also display this information depending on debug level
     $options_string = preg_replace("/config=.*&/", '', $options_string);
 
-    printmsg("INFO => Running module: {$module} options: {$options_string}", $log_level);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Running module: {$module} options: {$options_string}", $log_level);
 
     // Load the module
     if (load_module($module)) { return(array(1, $self['error'] . "\n")); }
 
     // Start an DB transaction (If the database supports it)
     if ($transaction) $has_trans = $onadb->BeginTrans();
-    if (!$has_trans) printmsg("WARNING => Transactions support not available on this database, this can cause problems!", 1);
+    if (!$has_trans) printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "WARNING => Transactions support not available on this database, this can cause problems!", 1);
 
     // If begintrans worked and we support transactions, do the smarter "starttrans" function
     if ($has_trans) {
-        printmsg("DEBUG => Commiting transaction", 2);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Commiting transaction", 2);
         $onadb->StartTrans();
     }
 
@@ -1525,12 +1559,12 @@ function run_module($module='', $options='', $transaction=1) {
 
     // Stop the timer, and display how long it took
     $stop_time = microtime_float();
-    printmsg("DEBUG => [Module_runtime] " . round(($stop_time - $start_time), 2) . " seconds -- [Total_SQL_Queries] " . $self['db_get_record_count'] . " --  [Module_exit_code] {$status}", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => [Module_runtime] " . round(($stop_time - $start_time), 2) . " seconds -- [Total_SQL_Queries] " . $self['db_get_record_count'] . " --  [Module_exit_code] {$status}", 1);
 
     // Either commit, or roll back the transaction
     if ($transaction and $has_trans) {
         if ($status != 0) {
-            printmsg("INFO => There was a module error, marking transaction for a Rollback!", 1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => There was a module error, marking transaction for a Rollback!", 1);
             //$onadb->RollbackTrans();
             $onadb->FailTrans();
         }
@@ -1545,12 +1579,12 @@ function run_module($module='', $options='', $transaction=1) {
 //        a rollback flag to force the transaction to rollback.. good for testing adds/modify.
 //        The problem is sub modules will fire and then the whole thing stops so you wont see/test the full operation.
 //         if ($local_options['rollback']) {
-//             printmsg("INFO => The user requested to mark the transaction for a rollback, no changes made.", 0);
+//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => The user requested to mark the transaction for a rollback, no changes made.", 0);
 //             $output .= "INFO => The user requested to mark the transaction for a rollback, no changes made.\n";
 //             $status = $status + 1;
 //         }
 
-        printmsg("DEBUG => Commiting transaction", 2);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Commiting transaction", 2);
         $onadb->CompleteTrans();
     }
 

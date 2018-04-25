@@ -176,11 +176,11 @@ function ws_save($window_name, $form='') {
 
         if ($status or !$rows) {
             $self['error'] = "ERROR => group_edit add ws_save()  SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             $self['error'] = "INFO => Group ADDED: {$form['name']} ";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
 
     }
@@ -208,7 +208,7 @@ function ws_save($window_name, $form='') {
 
         if ($status or !$rows) {
             $self['error'] = "ERROR => group_edit update ws_save()  SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             list($status, $rows, $new_record) = db_get_record($onadb, 'groups', array('id' => $form['id']));
@@ -227,8 +227,8 @@ function ws_save($window_name, $form='') {
 
             // only print to logfile if a change has been made to the record
             if($more != '') {
-                printmsg($self['error'], 0);
-                printmsg($log_msg, 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
             }
         }
     }

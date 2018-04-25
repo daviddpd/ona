@@ -30,7 +30,7 @@ require_once($conf['inc_functions_db']);
 ///////////////////////////////////////////////////////////////////////
 function subnet_display($options="") {
     global $conf, $self, $onadb;
-    printmsg('DEBUG => subnet_display('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => subnet_display('.$options.') called', 3);
 
     $text_array = array();
 
@@ -165,7 +165,7 @@ EOM
 ///////////////////////////////////////////////////////////////////////
 function subnet_add($options="") {
     global $conf, $self, $onadb;
-    printmsg('DEBUG => subnet_add('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => subnet_add('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.08';
@@ -312,7 +312,7 @@ EOM
         $self['error'] = "ERROR => Invalid subnet type specified!";
         return(array(10, $self['error'] . "\n"));
     }
-    printmsg("Subnet type selected: {$subnet_type['name']} ({$subnet_type['short_name']})", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "Subnet type selected: {$subnet_type['name']} ({$subnet_type['short_name']})", 1);
     $SET['subnet_type_id'] = $subnet_type['id'];
 
 
@@ -324,7 +324,7 @@ EOM
             $self['error'] = "ERROR => The vlan/campus pair specified is invalid!";
             return(array(11, $self['error'] . "\n"));
         }
-        printmsg("VLAN selected: {$vlan['name']} in {$vlan['vlan_campus_name']} campus", 1);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "VLAN selected: {$vlan['name']} in {$vlan['vlan_campus_name']} campus", 1);
         $SET['vlan_id'] = $vlan['id'];
     }
 
@@ -344,7 +344,7 @@ EOM
     // Check permissions
     if (!auth('subnet_add')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(14, $self['error'] . "\n"));
     }
 
@@ -354,7 +354,7 @@ EOM
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
         return(array(15, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => ID for new subnet: " . $id, 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new subnet: " . $id, 1);
     $SET['id'] = $id;
 
     // Insert the new subnet  record
@@ -370,7 +370,7 @@ EOM
 
     // Return the success notice
     $self['error'] = "INFO => Subnet ADDED: {$ip1}/{$cidr}";
-    printmsg($self['error'], 0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -403,7 +403,7 @@ EOM
 ///////////////////////////////////////////////////////////////////////
 function subnet_modify($options="") {
     global $conf, $self, $onadb;
-    //printmsg('DEBUG => subnet_modify('.implode (";",$options).') called', 3);
+    //printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => subnet_modify('.implode (";",$options).') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.09';
@@ -461,7 +461,7 @@ EOM
     // Check permissions
     if (!auth('subnet_modify')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(3, $self['error'] . "\n"));
     }
 
@@ -652,7 +652,7 @@ EOM
             $self['error'] = "ERROR => Invalid subnet type specified!";
             return(array(13, $self['error'] . "\n"));
         }
-        printmsg("Subnet type selected: {$subnet_type['display_name']} ({$subnet_type['short_name']})", 1);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "Subnet type selected: {$subnet_type['display_name']} ({$subnet_type['short_name']})", 1);
         $SET['subnet_type_id'] = $subnet_type['id'];
     }
 
@@ -668,7 +668,7 @@ EOM
                 $self['error'] = "ERROR => The vlan/campus pair specified is invalid!";
                 return(array(15, $self['error'] . "\n"));
             }
-            printmsg("VLAN selected: {$vlan['name']} in {$vlan['vlan_campus_name']} campus", 1);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "VLAN selected: {$vlan['name']} in {$vlan['vlan_campus_name']} campus", 1);
             $SET['vlan_id'] = $vlan['id'];
         }
     }
@@ -721,7 +721,7 @@ function subnet_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.06';
 
-    printmsg('DEBUG => subnet_del('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => subnet_del('.$options.') called', 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -763,7 +763,7 @@ EOM
     // Check permissions
     if (!auth('subnet_del') or !authlvl($subnet['lvl'])) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(3, $self['error'] . "\n"));
     }
 
@@ -816,12 +816,12 @@ EOM
         list($status, $rows) = db_delete_records($onadb, 'tags', array('type' => 'subnet', 'reference' => $subnet['id']));
         if ($status) {
             $self['error'] = "ERROR => subnet_del() Tag delete SQL Query failed: {$self['error']}";
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(5, $add_to_error . $self['error'] . "\n"));
         }
         //log deletions
         foreach($log as $log_msg) {
-            printmsg($log_msg,0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg,0);
             $add_to_error .= $log_msg . "\n";
         }
 
@@ -839,13 +839,13 @@ EOM
         list($status, $rows) = db_delete_records($onadb, 'custom_attributes', array('table_name_ref' => 'subnets', 'table_id_ref' => $subnet['id']));
         if ($status) {
             $self['error'] = "ERROR => subnet_del() Custom attribute delete SQL Query failed: {$self['error']}";
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(5, $self['error'] . "\n"));
         }
 
         //log deletions
         foreach($log as $log_msg) {
-            printmsg($log_msg,0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg,0);
             //$add_to_error .= $log_msg . "\n";
         }
 
@@ -897,7 +897,7 @@ EOM
         $ip = ip_mangle($subnet['ip_addr'], 'dotted');
         $cidr = ip_mangle($subnet['ip_mask'], 'cidr');
         $self['error'] = "INFO => Subnet DELETED: {$subnet['name']} IP: {$ip}/{$cidr}";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -1041,7 +1041,7 @@ function subnet_nextip($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg('DEBUG => subnet_nextip('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => subnet_nextip('.$options.') called', 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);

@@ -230,7 +230,7 @@ function ws_save($window_name, $form='') {
                 'mtime'       => date_mangle(time()),
             )
         );
-        printmsg("NOTICE => Added new user: {$form['username']} client url: {$_SESSION['auth']['client']['url']}", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "NOTICE => Added new user: {$form['username']} client url: {$_SESSION['auth']['client']['url']}", 0);
     }
     
     // Update an existing record?
@@ -261,12 +261,12 @@ function ws_save($window_name, $form='') {
             )
         );
         
-        printmsg("NOTICE => Updated user: {$form['username']} client url: {$_SESSION['auth']['client']['url']}", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "NOTICE => Updated user: {$form['username']} client url: {$_SESSION['auth']['client']['url']}", 0);
     }
     
     // If the module returned an error code display a popup warning
     if ($status) {
-        printmsg("ERROR => User add/edit failed! {$self['error']}", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => User add/edit failed! {$self['error']}", 0);
         $js .= "alert('Save failed. Contact the webmaster if this problem persists.');";
         $response->addScript($js);
         return($response->getXML());

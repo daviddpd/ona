@@ -8,7 +8,7 @@ $year = date('Y');
 // If there is a message of the day file, display it.
 $motdfile = $base.'/local/config/motd.txt';
 if (file_exists($motdfile)) {
-    printmsg("INFO => Displaying MOTD: {$motdfile}",1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Displaying MOTD: {$motdfile}",1);
     $MOTD = file_get_contents($motdfile);
 }
 

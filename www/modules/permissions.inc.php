@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////////////
 function add_permission($options="") {
     global $conf, $self, $onadb;
-    printmsg('DEBUG => add_permission('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => add_permission('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';
@@ -57,7 +57,7 @@ EOM
     list($status, $rows, $permissions) = db_get_record($onadb, 'permissions', array('name' => $options['name']), '');
     if ($rows) {
         $self['error'] = "ERROR => add_permission() Permission already exists: {$options['name']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(1, $self['error'] . "\n"));
     }
 
@@ -66,10 +66,10 @@ EOM
     $id = ona_get_next_id('permissions');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id('permissions') call failed!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(7, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => ID for new permission record: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new permission record: $id", 3);
 
     // Add the record
     list($status, $rows) =
@@ -84,14 +84,14 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => add_permission() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(2, $self['error'] . "\n"));
     }
 
 
     // Return the success notice
     $self['error'] = "INFO => Permission ADDED: {$options['name']} [{$options['desc']}]";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 

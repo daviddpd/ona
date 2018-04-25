@@ -50,7 +50,7 @@ function custom_attribute_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => custom_attribute_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => custom_attribute_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -113,7 +113,7 @@ EOM
 
     // If we didn't get a record then exit
     if (!$host['id'] and !$subnet['id'] and !$vlan['id']) {
-        printmsg("DEBUG => No host, subnet or vlan found!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No host, subnet or vlan found!",3);
         $self['error'] = "ERROR => No host, subnet or vlan found!";
         return(array(4, $self['error'] . "\n"));
     }
@@ -127,7 +127,7 @@ EOM
     // find the attribute type
     list($status, $rows, $catype) = ona_get_custom_attribute_type_record(array($typesearch => $options['type']));
     if (!$rows) {
-        printmsg("DEBUG => Unable to find custom attribute type: {$options['type']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find custom attribute type: {$options['type']}",3);
         $self['error'] = "ERROR => Unable to find custom attribute type: {$options['type']}";
         return(array(5, $self['error'] . "\n"));
     }
@@ -136,7 +136,7 @@ EOM
     // check for existing attributes like this
     list($status, $rows, $record) = ona_get_custom_attribute_record(array('table_name_ref' => $table_name_ref, 'table_id_ref' => $table_id_ref, 'custom_attribute_type_id' => $catype['id']));
     if ($rows) {
-        printmsg("DEBUG => The type '{$catype['name']}' is already in use on {$desc}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The type '{$catype['name']}' is already in use on {$desc}",3);
         $self['error'] = "ERROR => The type '{$catype['name']}' is already in use on {$desc}";
         return(array(6, $self['error'] . "\n"));
     }
@@ -145,7 +145,7 @@ EOM
 
     // validate the inpute value against the field_validation_rule.
     if ($catype['field_validation_rule'] and !preg_match($catype['field_validation_rule'], $options['value'])) {
-        printmsg("DEBUG => The value '{$options['value']}' does not match field validation rule: {$catype['field_validation_rule']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The value '{$options['value']}' does not match field validation rule: {$catype['field_validation_rule']}",3);
         $self['error'] = "ERROR => The value: '{$options['value']}', does not match field validation rule: {$catype['field_validation_rule']}\\nReason: {$catype['failed_rule_text']}";
         return(array(7, $self['error'] . "\n"));
     }
@@ -167,7 +167,7 @@ EOM
     );
     if ($status or !$rows) {
         $self['error'] = "ERROR => custom_attribute_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(8, $self['error'] . "\n"));
     }
 
@@ -212,7 +212,7 @@ function custom_attribute_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => custom_attribute_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => custom_attribute_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -279,7 +279,7 @@ EOM
 
     // If we didn't get a record then exit
     if (!$host['id'] and !$subnet['id'] and !$vlan['id']) {
-        printmsg("DEBUG => No host, subnet or vlan found!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No host, subnet or vlan found!",3);
         $self['error'] = "ERROR => No host, subnet or vlan found!";
         return(array(1, $self['error'] . "\n"));
     }
@@ -291,7 +291,7 @@ EOM
         list($status, $rows, $catype) = ona_get_custom_attribute_type_record(array('id' => $options['type']));
 
         if (!$catype['id']) {
-            printmsg("DEBUG => Unable to find custom attribute type using the ID {$options['name']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find custom attribute type using the ID {$options['name']}!",3);
             $self['error'] = "ERROR => Unable to find custom attribute type using the ID {$options['name']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -300,7 +300,7 @@ EOM
         $options['type'] = trim($options['type']);
         list($status, $rows, $catype) = ona_get_custom_attribute_type_record(array('name' => $options['type']));
         if (!$catype['id']) {
-            printmsg("DEBUG => Unable to find custom attribute type using the name {$options['type']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find custom attribute type using the name {$options['type']}!",3);
             $self['error'] = "ERROR => Unable to find custom attribute type using the name {$options['type']}!";
             return(array(3, $self['error'] . "\n"));
         }
@@ -308,7 +308,7 @@ EOM
 
     list($status, $rows, $record) = ona_get_custom_attribute_record(array('table_name_ref' => $table_name_ref, 'table_id_ref' => $table_id_ref, 'custom_attribute_type_id' => $catype['id']));
     if (!$rows) {
-        printmsg("DEBUG => Unable to find custom attribute!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find custom attribute!",3);
         $self['error'] = "ERROR => Unable to find custom attribute!";
         return(array(4, $self['error'] . "\n"));
     }
@@ -320,20 +320,20 @@ EOM
         // Check permissions
         if (!auth('custom_attribute_del')) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(5, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'custom_attributes', array('id' => $record['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => custom_attribute_del() SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(6, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => Custom Attribute DELETED: {$record['name']} ({$record['value']}) from {$desc}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -398,7 +398,7 @@ function custom_attribute_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => custom_attribute_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => custom_attribute_modify({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -447,12 +447,12 @@ EOM
     // Determine the entry itself exists
     list($status, $rows, $entry) = ona_get_custom_attribute_record(array('id' => $options['id']));
     if ($status or !$rows) {
-        printmsg("DEBUG => Invalid Custom Atribute record ID ({$options['id']})!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Invalid Custom Atribute record ID ({$options['id']})!",3);
         $self['error'] = "ERROR => Invalid Custom Atribute record ID ({$options['id']})!";
         return(array(2, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => custom_attribute_modify(): Found entry, {$entry['name']} => {$entry['value']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => custom_attribute_modify(): Found entry, {$entry['name']} => {$entry['value']}", 3);
     $desc='';
 
     // If they provided a hostname / ID let's look it up
@@ -487,7 +487,7 @@ EOM
     // Find the attribute type
     list($status, $rows, $catype) = ona_get_custom_attribute_type_record(array($typesearch => $typeval));
     if (!$rows) {
-        printmsg("DEBUG => Unable to find custom attribute type: {$typeval}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find custom attribute type: {$typeval}",3);
         $self['error'] = "ERROR => Unable to find custom attribute type: {$typeval}";
         return(array(3, $self['error'] . "\n"));
     }
@@ -508,7 +508,7 @@ EOM
 
     // validate the inpute value against the field_validation_rule.
     if ($catype['field_validation_rule'] and !preg_match($catype['field_validation_rule'], $SET['value'])) {
-        printmsg("DEBUG => The value '{$SET['value']}' does not match field validation rule: {$catype['field_validation_rule']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The value '{$SET['value']}' does not match field validation rule: {$catype['field_validation_rule']}",3);
         $self['error'] = "ERROR => The value: '{$SET['value']}', does not match field validation rule: {$catype['field_validation_rule']}\\nReason: {$catype['failed_rule_text']}";
         return(array(4, $self['error'] . "\n"));
     }
@@ -521,7 +521,7 @@ EOM
         // check for existing attributes like this that might already be assigned
         list($status, $rows, $record) = ona_get_custom_attribute_record(array('table_name_ref' => $table_name_ref, 'table_id_ref' => $table_id_ref, 'custom_attribute_type_id' => $catype['id']));
         if ($rows) {
-            printmsg("DEBUG => The type '{$catype['name']}' is already in use on {$desc}",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The type '{$catype['name']}' is already in use on {$desc}",3);
             $self['error'] = "ERROR => The type '{$catype['name']}' is already in use on {$desc}";
             return(array(5, $self['error'] . "\n"));
         }
@@ -537,7 +537,7 @@ EOM
     // If nothing at all changed up to this point, bail out
     if (!$SET) {
         $self['error'] = "ERROR => custom_attribute_modify() You didn't change anything. Make sure you have a new value.";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
 
@@ -545,14 +545,14 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'custom_attributes', array('id' => $entry['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => custom_attribute_modify() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(7, $self['error'] . "\n"));
     }
 
 
     // Return the success notice
     $self['error'] = $msg;
-    printmsg($self['error'], 0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     return(array(0, $self['error'] . "\n"));
 
 }
@@ -597,7 +597,7 @@ function custom_attribute_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.02';
 
-    printmsg("DEBUG => custom_attribute_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => custom_attribute_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -792,7 +792,7 @@ function custom_attribute_type_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.0';
 
-    printmsg("DEBUG => custom_attribute_type_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => custom_attribute_type_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);

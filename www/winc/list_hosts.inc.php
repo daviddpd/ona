@@ -33,7 +33,7 @@ function ws_display_list($window_name, $form='') {
         $_SESSION['ona'][$form['form_id']][$tab]['page'] = $page = $form['page'];
         $_SESSION['ona'][$form['form_id']][$tab]['filter'] = $form['filter'];
     }
-    printmsg("DEBUG => Displaying hosts list page: {$page}", 1);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying hosts list page: {$page}", 1);
 
     // Calculate the SQL query offset (based on the page being displayed)
     $offset = ($conf['search_results_per_page'] * ($page - 1));
@@ -178,7 +178,7 @@ function ws_display_list($window_name, $form='') {
     // DOMAIN
     if ($form['domain'] and !$form['hostname']) {
         // FIXME: does this clause work correctly?
-        printmsg("FIXME: => Does \$form['domain'] work correctly in list_hosts.inc.php?", 2);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "FIXME: => Does \$form['domain'] work correctly in list_hosts.inc.php?", 2);
         // Find the domain name piece of the hostname.
         // FIXME: MP this was taken from the ona_find_domain function. make that function have the option
         // to NOT return a default domain.

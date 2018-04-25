@@ -97,7 +97,7 @@ if (@file_exists($dbconffile)) {
 
             if (!$db->IsConnected()) {
                 $status++;
-                printmsg("INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
                 $err_txt .= " <img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> [{$cname}] Failed to connect as '{$cdbs['db_login']}'.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
             } else {
                 if ($db->SelectDB($cdbs['db_database'])) {
@@ -219,7 +219,7 @@ if ($install_submit == 'Y' && $upgrade == 'Y') {
     foreach(array_keys($ona_contexts) as $cname) {
 
         foreach($ona_contexts[$cname]['databases'] as $cdbs) {
-            printmsg("INFO => [{$cname}/{$cdbs['db_host']}] Performing an upgrade.",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$cname}/{$cdbs['db_host']}] Performing an upgrade.",0);
 
             // Make an initial connection to a DB server without specifying a database
             $db = ADONewConnection($cdbs['db_type']);
@@ -227,7 +227,7 @@ if ($install_submit == 'Y' && $upgrade == 'Y') {
 
             if (!$db->IsConnected()) {
                 $status++;
-                printmsg("INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
                 $text .= " <img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> [{$cname}] Failed to connect to '{$cdbs['db_host']}' as '{$cdbs['db_login']}'.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
             } else {
                 $db->Close();
@@ -250,11 +250,11 @@ if ($install_submit == 'Y' && $upgrade == 'Y') {
                     //$text .= "<pre>".$schema->PrintSQL('TEXT')."</pre>";
                     if ($schema->ExecuteSchema( $sql ) == 2) {
                         $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> [{$cname}/{$cdbs['db_host']}] Upgrading tables within database '{$cdbs['db_database']}'.<br>";
-                        printmsg("INFO => [{$cname}/{$cdbs['db_host']}] Upgrading tables within database: {$cdbs['db_database']}",0);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$cname}/{$cdbs['db_host']}] Upgrading tables within database: {$cdbs['db_database']}",0);
                     } else {
                         $status++;
                         $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> There was an error upgrading tables.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-                        printmsg("ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
                         break;
                     }
 
@@ -289,7 +289,7 @@ if ($install_submit == 'Y' && $upgrade == 'Y') {
                                 // Execute the SQL on the database
                                 if ($schema->ExecuteSchema( $sql ) == 2) {
                                     $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> [{$cname}/{$cdbs['db_host']}] Processed XML update file.<br>";
-                                    printmsg("INFO => [{$cname}/{$cdbs['db_host']}] Processed XML update file.",0);
+                                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$cname}/{$cdbs['db_host']}] Processed XML update file.",0);
 
                                     // update index info in the DB
                                     $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> [{$cname}/{$cdbs['db_host']}] Upgraded from index {$upgrade_index} to {$new_index}.<br>";
@@ -306,7 +306,7 @@ if ($install_submit == 'Y' && $upgrade == 'Y') {
                                 } else {
                                     $status++;
                                     $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> [{$cname}/{$cdbs['db_host']}] Failed to process XML update file.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-                                    printmsg("ERROR => [{$cname}/{$cdbs['db_host']}] Failed to process XML update file.  ".$db->ErrorMsg(),0);
+                                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => [{$cname}/{$cdbs['db_host']}] Failed to process XML update file.  ".$db->ErrorMsg(),0);
                                     break;
                                 }
                             } else {
@@ -348,13 +348,13 @@ if ($install_submit == 'Y' && $upgrade == 'Y') {
         if (!$fh = @fopen($dbconffile, 'w')) {
             $status++;
             $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed to open config file for writing: '{$dbconffile}'.<br>";
-            printmsg("ERROR => Failed to open config file for writing: '{$dbconffile}'.",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failed to open config file for writing: '{$dbconffile}'.",0);
         }
         else {
             fwrite($fh, "<?php\n\n\$ona_contexts=".var_export($ona_contexts,TRUE).";\n\n?>");
             fclose($fh);
             $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> Upgraded database connection config file to new format.<br>";
-            printmsg("INFO => Upgraded database connection config file to new format.",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Upgraded database connection config file to new format.",0);
         }
     }
 
@@ -410,7 +410,7 @@ if ($install_submit == 'Y' && !isset($upgrade)) {
     if (!$db->IsConnected()) {
         $status++;
         $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed to connect to '{$database_host}' as '{$admin_login}'.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-        printmsg("INFO => Unable to connect to server '$database_host'. ".$db->ErrorMsg(),0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Unable to connect to server '$database_host'. ".$db->ErrorMsg(),0);
     } else {
         $text .= "<script>el('mainform').style.display = 'none';</script><img src=\"{$images}/silk/accept.png\" border=\"0\" /> Connected to '{$database_host}' as '{$admin_login}'.<br>";
 
@@ -418,7 +418,7 @@ if ($install_submit == 'Y' && !isset($upgrade)) {
         if (@$db->Execute("DROP DATABASE IF EXISTS {$database_name}")) {
             //@$db->Execute("DROP USER IF EXISTS '{$sys_login}'@'%'");
             $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> Dropped existing instance of '{$database_name}'.<br>";
-            printmsg("INFO => Dropped existing DB: $database_name",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Dropped existing DB: $database_name",0);
         }
         else {
             $status++;
@@ -433,12 +433,12 @@ if ($install_submit == 'Y' && !isset($upgrade)) {
         $sqlarray = $datadict->CreateDatabase($database_name);
         if ($datadict->ExecuteSQLArray($sqlarray) == 2) {
             $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> Created new database '{$database_name}'.<br>";
-            printmsg("INFO => Added new DB: $database_name",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Added new DB: $database_name",0);
         }
         else {
             $status++;
             $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed to create new database '{$database_name}'.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-            printmsg("ERROR => Failed to create new database '{$database_name}'. ".$db->ErrorMsg(),0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failed to create new database '{$database_name}'. ".$db->ErrorMsg(),0);
         }
 
 
@@ -456,11 +456,11 @@ if ($install_submit == 'Y' && !isset($upgrade)) {
             // Execute the SQL on the database
             if ($schema->ExecuteSchema( $sql ) == 2) {
                 $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> Creating and updating tables within database '{$database_name}'.<br>";
-                printmsg("INFO => Creating and updating tables within new DB: {$database_name}",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Creating and updating tables within new DB: {$database_name}",0);
             } else {
                 $status++;
                 $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> There was an error processing tables.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-                printmsg("ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
             }
 
              // Load initial data into the new tables
@@ -472,11 +472,11 @@ if ($install_submit == 'Y' && !isset($upgrade)) {
                 // Execute the SQL on the database
                 if ($schema->ExecuteSchema( $sql ) == 2) {
                     $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> Loaded tables with default data.<br>";
-                    printmsg("INFO => Loaded data to new DB: {$database_name}",0);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Loaded data to new DB: {$database_name}",0);
                 } else {
                     $status++;
                     $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed load default data.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-                    printmsg("ERROR => There was an error loading the data: ".$db->ErrorMsg(),0);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error loading the data: ".$db->ErrorMsg(),0);
                 }
             }
 
@@ -490,12 +490,12 @@ if ($install_submit == 'Y' && !isset($upgrade)) {
                 @$db->Execute("GRANT ALL ON {$database_name}.* TO '{$sys_login}'@'{$database_host}' IDENTIFIED BY '{$sys_passwd}'");
                 @$db->Execute("FLUSH PRIVILEGES");
                 $text .= "<img src=\"{$images}/silk/accept.png\" border=\"0\" /> Created system user '{$sys_login}'.<br>";
-                printmsg("INFO => Created new DB user: {$sys_login}",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Created new DB user: {$sys_login}",0);
             }
             else {
                 $status++;
                 $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed to create system user '{$sys_login}'.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-                printmsg("ERROR => There was an error creating DB user: ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error creating DB user: ".$db->ErrorMsg(),0);
             }
 
             // add the default domain to the system
@@ -547,7 +547,7 @@ EOL;
         } else {
             $status++;
             $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed to select DB '{$database_name}'.<br><span style='font-size: xx-small;'>".$db->ErrorMsg()."</span><br>";
-            printmsg("ERROR => Failed to select DB: {$database_name}.  ".$db->ErrorMsg(),0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failed to select DB: {$database_name}.  ".$db->ErrorMsg(),0);
         }
 
 

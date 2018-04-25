@@ -104,7 +104,7 @@ function config_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.02';
     
-    printmsg('DEBUG => config_display('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => config_display('.$options.') called', 3);
     
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -214,7 +214,7 @@ function config_chksum($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
     
-    printmsg('DEBUG => config_chksum('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => config_chksum('.$options.') called', 3);
     
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -308,7 +308,7 @@ function config_add($options="") {
     $version = '1.00';
     
     // This debug is set very high as it can contain large configs and sensitive data, you gotta mean it!
-    printmsg('DEBUG => config_add('.$options.') called', 7);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => config_add('.$options.') called', 7);
     
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -359,7 +359,7 @@ EOM
     if (!$id) {
         return(array(4, "ERROR => The ona_get_next_id(configurations) call failed!\n"));
     }
-    printmsg("DEBUG => ID for new config_record: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new config_record: $id", 3);
     
     // Add the config_text
     list($status, $rows) = db_insert_record(
@@ -375,7 +375,7 @@ EOM
     );
     if ($status or !$rows) {
         $self['error'] = "ERROR => message_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
     
@@ -429,7 +429,7 @@ function config_diff($options="") {
     // Version - UPDATE on every edit!
     $version = '1.03';
     
-    printmsg('DEBUG => config_diff('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => config_diff('.$options.') called', 3);
     
     // Parse incoming options string to an array
     $options = parse_options($options);

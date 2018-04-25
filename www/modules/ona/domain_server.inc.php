@@ -30,7 +30,7 @@ function domain_server_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.02';
 
-    printmsg("DEBUG => domain_server_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_server_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -72,12 +72,12 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$domain['id']) {
-        printmsg("DEBUG => Unable to find the domain record using {$options['domain']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the domain record using {$options['domain']}!",3);
         $self['error'] = "ERROR => Unable to find the domain record using {$options['domain']}!";
         return(array(4, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => domain_server_add(): Found domain, {$domain['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_server_add(): Found domain, {$domain['name']}", 3);
 
     // Determine the server is valid
     list($status, $rows, $ns_dns) = ona_find_dns_record($options['server']);
@@ -86,7 +86,7 @@ EOM
     $host['id'] = $interface['host_id'];
 
     if (!$host['id']) {
-        printmsg("DEBUG => The server ({$options['server']}) does not exist!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server ({$options['server']}) does not exist!",3);
         $self['error'] = "ERROR => The server specified, {$options['server']}, does not exist!";
         return(array(2, $self['error'] . "\n"));
     }
@@ -111,7 +111,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(12, $self['error'] . "\n"));
     }
 
@@ -119,7 +119,7 @@ EOM
     // Test that this domain isnt already assigned to the server
     list($status, $rows, $domainserver) = ona_get_dns_server_domain_record(array('host_id' => $host['id'],'domain_id' => $domain['id']));
     if ($rows) {
-        printmsg("DEBUG => Domain {$domain['name']} already assigned to {$options['server']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Domain {$domain['name']} already assigned to {$options['server']}",3);
         $self['error'] = "ERROR => Domain {$domain['name']} already assigned to {$options['server']}";
         return(array(11, $self['error'] . "\n"));
     }
@@ -129,11 +129,11 @@ EOM
     $id = ona_get_next_id('dns_server_domains');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $add_to_error . $self['error'] . "\n"));
     }
 
-    printmsg("DEBUG => domain_server_add(): New DNS server domain ID: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_server_add(): New DNS server domain ID: $id", 3);
 
     // Add new record to dns_server_domains
     list($status, $rows) =
@@ -151,7 +151,7 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => domain_server_add() SQL Query failed:" . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(8, $add_to_error . $self['error'] . "\n"));
     }
 
@@ -167,7 +167,7 @@ EOM
 
     // Auto add the NS record if there were none found already. the user can remove any NS records they dont want afterwards
     if (!$dnsrows) {
-        printmsg("DEBUG => Auto adding a NS record for {$options['server']}.", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Auto adding a NS record for {$options['server']}.", 0);
         // Run dns_record_add as a NS type
         list($status, $output) = run_module('dns_record_add', array('name' => $domain['fqdn'],'pointsto' => $options['server'], 'type' => 'NS'));
         if ($status)
@@ -175,12 +175,12 @@ EOM
         $add_to_error .= $output;
     }
     else {
-        printmsg("DEBUG => Found existing NS record for {$options['server']}. Skipping the auto add.", 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Found existing NS record for {$options['server']}. Skipping the auto add.", 0);
     }
 
     // Return the success notice
     $self['error'] = "INFO => DNS Domain/Server Pair ADDED: {$domain['name']}/{$options['server']} ";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $add_to_error . $self['error'] . "\n"));
 
 
@@ -215,7 +215,7 @@ function domain_server_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.02';
 
-    printmsg("DEBUG => domain_server_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_server_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -260,19 +260,19 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$domain['id']) {
-        printmsg("DEBUG => Unable to find the domain record using {$options['domain']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the domain record using {$options['domain']}!",3);
         $self['error'] = "ERROR => Unable to find the domain record using {$options['domain']}!";
         return(array(4, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => domain_server_del(): Found domain, {$domain['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_server_del(): Found domain, {$domain['name']}", 3);
 
     if ($options['server']) {
         // Determine the server is valid
         list($status, $rows, $host) = ona_find_host($options['server']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The server ({$options['server']}) does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The server ({$options['server']}) does not exist!",3);
             $self['error'] = "ERROR => The server specified, {$options['server']}, does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -281,7 +281,7 @@ EOM
     // Test that this domain is even assigned to the server
     list($status, $rows, $domainserver) = ona_get_dns_server_domain_record(array('host_id' => $host['id'],'domain_id' => $domain['id']));
     if (!$rows) {
-        printmsg("DEBUG => Unable to find {$domain['name']} on server {$host['fqdn']}",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find {$domain['name']} on server {$host['fqdn']}",3);
         $self['error'] = "ERROR => Unable to find {$domain['name']} on server {$host['fqdn']}";
         return(array(11, $self['error'] . "\n"));
     }
@@ -302,7 +302,7 @@ EOM
         // Check permissions
         if (!auth('advanced') or !authlvl($host['LVL']) or !authlvl($domain['LVL'])) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
@@ -311,7 +311,7 @@ EOM
         list($status, $rows) = db_delete_records($onadb, 'dns_server_domains', array('id' => $domainserver['id']));
         if ($status) {
             $self['error'] = "ERROR => domain_server_del() SQL Query failed:" . $self['error'];
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(9, $self['error'] . "\n"));
         }
 
@@ -320,7 +320,7 @@ EOM
             list($status, $output) = run_module('dns_record_del', array('name' => $dnsrec['id'], 'type' => 'NS', 'commit' => 'Y'));
             if ($status) {
                 $self['error'] = "ERROR => domain_server_del() NS record delete failed:" . $output;
-                printmsg($self['error'],0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
                 return(array(9, $self['error'] . "\n"));
             }
             else {
@@ -331,7 +331,7 @@ EOM
 
         // Return the success notice
         $self['error'] = "INFO => DNS Domain/Server Pair DELETED: {$domain['name']}/{$host['fqdn']} ";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $add_to_error. $self['error'] . "\n"));
     }
 

@@ -198,7 +198,7 @@ if (file_exists($base.'/local/config/run_install') or @$runinstaller or @$instal
 if (@function_exists('mb_internal_encoding')) {
     mb_internal_encoding("UTF-8");
 } else {
-    printmsg("INFO => Missing 'mb_internal_encoding' function. Please install PHP 'mbstring' functions for proper UTF-8 encoding.", 0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Missing 'mb_internal_encoding' function. Please install PHP 'mbstring' functions for proper UTF-8 encoding.", 0);
 }
 
 // If we dont have a ona_context set in the cookie, lets set a cookie with the default context
@@ -212,12 +212,12 @@ $onadb = db_pconnect('', $_COOKIE['ona_context_name']);
 // These will override any of the defaults set above
 list($status, $rows, $records) = db_get_records($onadb, 'sys_config', 'name like "%"', 'name');
 foreach ($records as $record) {
-    printmsg("INFO => Loaded config item from database: {$record['name']}=''{$record['value']}''",5);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Loaded config item from database: {$record['name']}=''{$record['value']}''",5);
     $conf[$record['name']] = $record['value'];
 }
 
 // Include functions that replace the default session handler with one that uses MySQL as a backend
-require_once($conf['inc_db_sessions']);
+// require_once($conf['inc_db_sessions']);
 
 // Include the GUI functions
 require_once($conf['inc_functions_gui']);

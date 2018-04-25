@@ -90,7 +90,7 @@ EOL;
                 $stat++;
                 $window['html'] .= "&nbsp;&nbsp;&nbsp;&nbsp;<img src='{$images}/silk/error.png' border='0'> {$modname} failed to install.<br>";
             } else {
-                printmsg("DEBUG => Plugin install for {$plugin_name} created new DCM module {$modname}.",2);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Plugin install for {$plugin_name} created new DCM module {$modname}.",2);
                 $window['html'] .= "&nbsp;&nbsp;&nbsp;&nbsp;<img src='{$images}/silk/accept.png' border='0'> {$modname}<br>";
             }
         } else {
@@ -108,17 +108,17 @@ if (file_exists($sqlfile)) {
 //print_r($statement);
 
     $has_trans = $onadb->BeginTrans();
-    if (!$has_trans) printmsg("WARNING => Transactions support not available on this database, this can cause problems!", 1);
+    if (!$has_trans) printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "WARNING => Transactions support not available on this database, this can cause problems!", 1);
 
     // If begintrans worked and we support transactions, do the smarter "starttrans" function
     if ($has_trans) {
-        printmsg("DEBUG => Starting transaction", 2);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Starting transaction", 2);
         $onadb->StartTrans();
     }
 
 
     // Run the SQL
-    printmsg("DEBUG => Installing {$modname} plugin SQL statements.", 4);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Installing {$modname} plugin SQL statements.", 4);
     $i = 0;
     while ($i < count($statements)-1) {
 
@@ -130,7 +130,7 @@ if (file_exists($sqlfile)) {
 
         if ($ok === false or $error) {
             if ($has_trans) {
-                printmsg("INFO => There was a module error, marking transaction for a Rollback!", 1);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => There was a module error, marking transaction for a Rollback!", 1);
                 $onadb->FailTrans();
             }
             break;

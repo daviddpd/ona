@@ -22,7 +22,7 @@
 ///////////////////////////////////////////////////////////////////////
 function get_module_list($options="type=string") {
     global $conf, $self, $onadb;
-    printmsg('DEBUG => get_module_list('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => get_module_list('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.01';
@@ -63,7 +63,7 @@ EOM
 
     // FIXME: move this to the db later!
     list($status, $rows, $modules) = db_get_records($onadb, 'dcm_module_list', '1', 'name');
-    printmsg("DEBUG => get_module_list() found {$rows} modules in db", 4);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => get_module_list() found {$rows} modules in db", 4);
     foreach ($modules as $module) {
         if ($module['name'] != 'get_module_list') {
             $modules_string .= str_pad($module['name'], $pad_length) . " :: {$module['description']}\n";
@@ -102,7 +102,7 @@ EOM
 ///////////////////////////////////////////////////////////////////////
 function add_module($options="") {
     global $conf, $self, $onadb;
-    printmsg('DEBUG => add_module('.$options.') called', 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => add_module('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';
@@ -139,7 +139,7 @@ EOM
     list($status, $rows, $modules) = db_get_record($onadb, 'dcm_module_list', array('name' => $options['name']), '');
     if ($rows) {
         $self['error'] = "ERROR => add_module() Module name already exists: {$options['name']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(1, $self['error'] . "\n"));
     }
 
@@ -156,14 +156,14 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => add_module() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(2, $self['error'] . "\n"));
     }
 
 
     // Return the success notice
     $self['error'] = "INFO => Module ADDED: {$options['name']} [{$options['desc']}] => {$options['file']}";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 

@@ -35,7 +35,7 @@ function block_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => block_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => block_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -84,7 +84,7 @@ EOM
 
     if ($status or $rows) {
         $self['error'] = "ERROR => The block {$options['name']} already exists!";
-        printmsg("DEBUG => The block {$options['name']} already exists!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The block {$options['name']} already exists!",3);
         return(array(3, $self['error'] . "\n"));
     }
 
@@ -92,7 +92,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -100,10 +100,10 @@ EOM
     $id = ona_get_next_id('blocks');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(5, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => ID for new block: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new block: $id", 3);
 
     // Add the block
     list($status, $rows) =
@@ -120,13 +120,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => block_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => Block ADDED: {$options['name']}";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -168,7 +168,7 @@ function block_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => block_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => block_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -209,7 +209,7 @@ EOM
 
         if (!$block['id']) {
             $self['error'] = "ERROR => Unable to find block using the ID {$options['block']}!";
-            printmsg("DEBUG => Unable to find block using the ID {$options['block']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find block using the ID {$options['block']}!",3);
             return(array(2, $self['error'] . "\n"));
         }
     }
@@ -217,7 +217,7 @@ EOM
         list($status, $rows, $block) = ona_get_block_record(array('name' => $options['block']));
         if (!$block['id']) {
             $self['error'] = "ERROR => Unable to find block using the name {$options['block']}!";
-            printmsg("DEBUG => Unable to find block using the name {$options['block']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find block using the name {$options['block']}!",3);
             return(array(2, $self['error'] . "\n"));
         }
     }
@@ -229,20 +229,20 @@ EOM
         // Check permissions
         if (!auth('advanced')) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'blocks', array('id' => $block['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => block_del() SQL Query failed: " . $self['error'];
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(4, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => Block DELETED: {$block['name']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -305,7 +305,7 @@ function block_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.02';
 
-    printmsg("DEBUG => block_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => block_modify({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -355,7 +355,7 @@ EOM
         list($status, $rows, $block) = ona_get_block_record(array('id' => $options['block']));
 
         if (!$block['id']) {
-            printmsg("DEBUG => Unable to find block using the ID {$options['block']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find block using the ID {$options['block']}!",3);
             $self['error'] = "ERROR => Unable to find block using the ID {$options['block']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -364,12 +364,12 @@ EOM
         list($status, $rows, $block) = ona_get_block_record(array('name' => $options['block']));
         if (!$block['id']) {
             $self['error'] = "ERROR => Unable to find block using the name {$options['block']}!";
-            printmsg("DEBUG => Unable to find block using the name {$options['block']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find block using the name {$options['block']}!",3);
             return(array(2, $self['error'] . "\n"));
         }
     }
 
-    printmsg("DEBUG => Found block: {$block['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Found block: {$block['name']}", 3);
 
 
     // This variable will contain the updated info we'll insert into the DB
@@ -382,7 +382,7 @@ EOM
         list($status, $rows, $record) =  db_get_records($onadb, 'blocks', "id != {$block['id']} AND name LIKE '{$options['set_name']}'");
 
         if ($status or $rows) {
-            printmsg("DEBUG => The block {$options['set_name']} already exists!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The block {$options['set_name']} already exists!",3);
             $self['error'] = "ERROR => The block {$options['set_name']} already exists!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -407,7 +407,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -418,7 +418,7 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'blocks', array('id' => $block['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => block_modify() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
     // Get the block record before updating (logging)
@@ -441,8 +441,8 @@ EOM
 
     // only print to logfile if a change has been made to the record
     if($more != '') {
-        printmsg($self['error'], 0);
-        printmsg($log_msg, 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
     }
 
     return(array(0, $self['error'] . "\n"));
@@ -480,7 +480,7 @@ function block_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => block_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => block_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -525,7 +525,7 @@ EOM
         list($status, $rows, $block) = ona_get_block_record(array('id' => $options['block']));
 
         if (!$block['id']) {
-            printmsg("DEBUG => Unable to find block using the ID {$options['block']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find block using the ID {$options['block']}!",3);
             $self['error'] = "ERROR => Unable to find block using the ID {$options['block']}!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -534,12 +534,12 @@ EOM
         list($status, $rows, $block) = ona_get_block_record(array('name' => $options['block']));
         if (!$block['id']) {
             $self['error'] = "ERROR => Unable to find block using the name {$options['block']}!";
-            printmsg("DEBUG => Unable to find block using the name {$options['block']}!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find block using the name {$options['block']}!",3);
             return(array(2, $self['error'] . "\n"));
         }
     }
 
-    printmsg("DEBUG => Found block: {$block['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Found block: {$block['name']}", 3);
 
     // Build text to return
     $text  = "BLOCK RECORD\n";

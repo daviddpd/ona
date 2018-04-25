@@ -173,7 +173,7 @@ function upgrade() {
 
             if (!$db->IsConnected()) {
                 $status++;
-                printmsg("INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
                 $text .= "[{$cname}] Failed to connect as '{$cdbs['db_login']}'. ERROR: ".$db->ErrorMsg();
             } else {
                 if ($db->SelectDB($cdbs['db_database'])) {
@@ -225,7 +225,7 @@ if ($upgrade == 'Y' or $upgrade == 'y') {
     foreach(array_keys($ona_contexts) as $cname) {
 
         foreach($ona_contexts[$cname]['databases'] as $cdbs) {
-            printmsg("INFO => [{$cname}/{$cdbs['db_host']}] Performing an upgrade.",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$cname}/{$cdbs['db_host']}] Performing an upgrade.",0);
 
             // Make an initial connection to a DB server without specifying a database
             $db = ADONewConnection($adotype);
@@ -233,7 +233,7 @@ if ($upgrade == 'Y' or $upgrade == 'y') {
 
             if (!$db->IsConnected()) {
                 $status++;
-                printmsg("INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Unable to connect to server '{$cdbs['db_host']}'. ".$db->ErrorMsg(),0);
                 $text .= " [{$cname}] Failed to connect to '{$cdbs['db_host']}' as '{$cdbs['db_login']}'. ERROR: ".$db->ErrorMsg()."\n";
             } else {
                 $db->Close();
@@ -257,11 +257,11 @@ if ($upgrade == 'Y' or $upgrade == 'y') {
                     // Execute the SQL on the database
                     if ($schema->ExecuteSchema( $sql ) == 2) {
                         $text .= "[{$cname}/{$cdbs['db_host']}] Upgrading tables within database '{$cdbs['db_database']}'.\n";
-                        printmsg("INFO => [{$cname}/{$cdbs['db_host']}] Upgrading tables within database: {$cdbs['db_database']}",0);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$cname}/{$cdbs['db_host']}] Upgrading tables within database: {$cdbs['db_database']}",0);
                     } else {
                         $status++;
                         $text .= "There was an error upgrading tables. ERROR: ".$db->ErrorMsg()."\n";
-                        printmsg("ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
+                        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
                         break;
                     }
 
@@ -312,7 +312,7 @@ if ($upgrade == 'Y' or $upgrade == 'y') {
                                 } else {
                                     $status++;
                                     $text .= "[{$cname}/{$cdbs['db_host']}] Failed to process XML update file.\n".$db->ErrorMsg()."\n";
-                                    printmsg("ERROR => [{$cname}/{$cdbs['db_host']}] Failed to process XML update file.  ".$db->ErrorMsg(),0);
+                                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => [{$cname}/{$cdbs['db_host']}] Failed to process XML update file.  ".$db->ErrorMsg(),0);
                                     break;
                                 }
                             } else {
@@ -354,7 +354,7 @@ if ($upgrade == 'Y' or $upgrade == 'y') {
         if (!$fh = @fopen($dbconffile, 'w')) {
             $status++;
             $text .= "<img src=\"{$images}/silk/exclamation.png\" border=\"0\" /> Failed to open config file for writing: '{$dbconffile}'.<br>";
-            printmsg("ERROR => Failed to open config file for writing: '{$dbconffile}'.",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failed to open config file for writing: '{$dbconffile}'.",0);
         }
         else {
             fwrite($fh, "<?php\n\n\$ona_contexts=".var_export($ona_contexts,TRUE).";\n\n?>");
@@ -435,7 +435,7 @@ function new_install() {
         if (@$db->Execute("DROP DATABASE IF EXISTS {$database_name}")) {
             //@$db->Execute("DROP USER IF EXISTS '{$sys_login}'@'%'");
             $text .= "Dropped existing instance of '{$database_name}'.\n";
-            printmsg("INFO => Dropped existing DB: $database_name",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Dropped existing DB: $database_name",0);
         }
         else {
             $status++;
@@ -450,12 +450,12 @@ function new_install() {
         $sqlarray = $datadict->CreateDatabase($database_name);
         if ($datadict->ExecuteSQLArray($sqlarray) == 2) {
             $text .= "Created new database '{$database_name}'.\n";
-            printmsg("INFO => Added new DB: $database_name",0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Added new DB: $database_name",0);
         }
         else {
             $status++;
             $text .= "Failed to create new database '{$database_name}'.\n".$db->ErrorMsg()."\n";
-            printmsg("ERROR => Failed to create new database '{$database_name}'. ".$db->ErrorMsg(),0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failed to create new database '{$database_name}'. ".$db->ErrorMsg(),0);
         }
 
 
@@ -473,11 +473,11 @@ function new_install() {
             // Execute the SQL on the database
             if ($schema->ExecuteSchema( $sql ) == 2) {
                 $text .= "Creating and updating tables within database '{$database_name}'.\n";
-                printmsg("INFO => Creating and updating tables within new DB: {$database_name}",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Creating and updating tables within new DB: {$database_name}",0);
             } else {
                 $status++;
                 $text .= "There was an error processing tables.\n".$db->ErrorMsg()."\n";
-                printmsg("ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error processing tables: ".$db->ErrorMsg(),0);
             }
 
              // Load initial data into the new tables
@@ -490,11 +490,11 @@ function new_install() {
                 // Execute the SQL on the database
                 if ($schema->ExecuteSchema( $sql ) == 2) {
                     $text .= "Loaded tables with default data.\n";
-                    printmsg("INFO => Loaded data to new DB: {$database_name}",0);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Loaded data to new DB: {$database_name}",0);
                 } else {
                     $status++;
                     $text .= "Failed load default data.\n".$db->ErrorMsg()."\n";
-                    printmsg("ERROR => There was an error loading the data: ".$db->ErrorMsg(),0);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error loading the data: ".$db->ErrorMsg(),0);
                 }
             }
 
@@ -508,12 +508,12 @@ function new_install() {
                 $db->Execute("GRANT ALL ON {$database_name}.* TO '{$sys_login}'@'{$database_host}' IDENTIFIED BY '{$sys_passwd}'");
                 $db->Execute("FLUSH PRIVILEGES");
                 $text .= "Created system user '{$sys_login}'.\n";
-                printmsg("INFO => Created new DB user: {$sys_login}",0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Created new DB user: {$sys_login}",0);
             }
             else {
                 $status++;
                 $text .= "Failed to create system user '{$sys_login}'.\n".$db->ErrorMsg()."\n";
-                printmsg("ERROR => There was an error creating DB user: ".$db->ErrorMsg(),0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => There was an error creating DB user: ".$db->ErrorMsg(),0);
             }
 
 
@@ -566,7 +566,7 @@ EOL;
         } else {
             $status++;
             $text .= "Failed to select DB '{$database_name}'.\n".$db->ErrorMsg()."\n";
-            printmsg("ERROR => Failed to select DB: {$database_name}.  ".$db->ErrorMsg(),0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Failed to select DB: {$database_name}.  ".$db->ErrorMsg(),0);
         }
 
 

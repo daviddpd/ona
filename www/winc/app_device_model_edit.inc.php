@@ -190,7 +190,7 @@ function ws_save($window_name, $form='') {
 
         if ($status or !$rows) {
             $self['error'] = "ERROR => device_model_edit update ws_save()  SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             // Get the model record after updating (logging)
@@ -210,8 +210,8 @@ function ws_save($window_name, $form='') {
 
             // only print to logfile if a change has been made to the record
             if($more != '') {
-                printmsg($self['error'], 0);
-                printmsg($log_msg, 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
             }
         }
     }
@@ -220,10 +220,10 @@ function ws_save($window_name, $form='') {
         $id = ona_get_next_id('models');
         if (!$id) {
             $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
-            printmsg("DEBUG => ID for new device model: $id", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new device model: $id", 3);
             list($status, $rows) = db_insert_record($onadb,
                                                     "models",
                                                     array('id' => $id,
@@ -234,11 +234,11 @@ function ws_save($window_name, $form='') {
                                                     );
             if ($status or !$rows) {
                 $self['error'] = "ERROR => device_model_edit add ws_save()  SQL Query failed: " . $self['error'];
-                printmsg($self['error'], 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 $self['error'] = "INFO => Device Model ADDED: {$form['model_description']} ";
-                printmsg($self['error'], 0);
+                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
         }
     }

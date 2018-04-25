@@ -883,7 +883,7 @@ function ws_makeprimary($window_name, $form='') {
     list($status, $rows) = db_update_record($onadb, 'hosts', array('id' => $form['host_id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => makeprimary() SQL Query failed to update host: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         $js .= "alert('Makeprimary failed. " . preg_replace('/[\s\']+/', ' ', $self['error']) . "');";
     } else if ($form['js']) {
         // Hardcoding so that it always refreshes the display host page.
@@ -933,7 +933,7 @@ function ws_enablerecord($window_name, $form='') {
     list($status, $rows) = db_update_record($onadb, 'dns', array('id' => $form['dns_record_id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => enablerecord() SQL Query failed to update dnsrecord: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         $js .= "alert('Enable DNS record failed. " . preg_replace('/[\s\']+/', ' ', $self['error']) . "');";
     } else if ($form['js']) {
         // Hardcoding so that it always refreshes the display host page.

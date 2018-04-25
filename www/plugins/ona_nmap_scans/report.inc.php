@@ -573,7 +573,7 @@ EOL;
                 list($updatestatus, $output) = run_module('interface_modify', array('interface' => $record['dbip'], 'set_last_response' => $form['runtime']));
                 if ($updatestatus) {
                     $self['error'] = "ERROR => Failed to update response time for '{$record['dbip']}': " . $output;
-                    printmsg($self['error'], 1);
+                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
                 }
                 $upresp='~';
             }

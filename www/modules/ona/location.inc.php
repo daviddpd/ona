@@ -29,7 +29,7 @@ function location_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.02';
 
-    printmsg("DEBUG => location_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => location_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -75,7 +75,7 @@ EOM
     list($status, $rows, $loc) = ona_get_location_record(array('reference' => $options['reference']));
 
     if ($status or $rows) {
-        printmsg("DEBUG => The location {$options['reference']} already exists!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The location {$options['reference']} already exists!",3);
         $self['error'] = "ERROR => The location {$options['reference']} already exists!";
         return(array(3, $self['error'] . "\n"));
     }
@@ -85,7 +85,7 @@ EOM
     // Check permissions
     if (!auth('location_add')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -93,10 +93,10 @@ EOM
     $id = ona_get_next_id('locations');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(5, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => ID for new location: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new location: $id", 3);
 
     // Add the record
     list($status, $rows) =
@@ -118,13 +118,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => location_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => Location ADDED: {$options['reference']}: {$options['name']}";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -166,7 +166,7 @@ function location_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => location_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => location_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -203,15 +203,15 @@ EOM
     // Find the Location to use
     list($status, $rows, $loc) = ona_find_location($options['reference']);
     if ($status or !$rows) {
-        printmsg("DEBUG => The location specified, {$options['reference']}, does not exist!", 3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The location specified, {$options['reference']}, does not exist!", 3);
         return(array(2, "ERROR => The location specified, {$options['reference']}, does not exist!\n"));
     }
-    printmsg("DEBUG => Location selected: {$loc['reference']}, location name: {$loc['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Location selected: {$loc['reference']}, location name: {$loc['name']}", 3);
 
 
     list($status, $rows, $usage) = db_get_records($onadb, 'devices', array('location_id' => $loc['id']), '' ,0);
     if ($rows != 0) {
-        printmsg("DEBUG => The location ({$loc['reference']}) is in use by {$rows} devices(s)!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The location ({$loc['reference']}) is in use by {$rows} devices(s)!",3);
         $self['error'] = "ERROR => The location ({$loc['reference']}) is in use by {$rows} devices(s)!";
         return(array(6, $self['error']."\n"));
     }
@@ -222,20 +222,20 @@ EOM
         // Check permissions
         if (!auth('location_del')) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'locations', array('id' => $loc['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => location_del() SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(4, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => Location DELETED: {$loc['reference']} ({$loc['name']})";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -292,7 +292,7 @@ function location_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => location_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => location_modify({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -333,13 +333,13 @@ EOM
     list($status, $rows, $loc) = ona_find_location($options['reference']);
 
     if (!$loc['id']) {
-        printmsg("DEBUG => Unable to find location using: {$options['reference']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find location using: {$options['reference']}!",3);
         $self['error'] = "ERROR => Unable to find location using: {$options['reference']}!";
         return(array(1, $self['error'] . "\n"));
     }
 
 
-    printmsg("DEBUG => Found location: {$loc['reference']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Found location: {$loc['reference']}", 3);
 
 
     // This variable will contain the updated info we'll insert into the DB
@@ -393,14 +393,14 @@ EOM
 
     if (!$SET) {
         $self['error'] = "ERROR => You did not update anything.";
-        printmsg($self['error'], 1);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
         return(array(2, $self['error'] . "\n"));
     }
 
     // Check permissions
     if (!auth('location_add')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(2, $self['error'] . "\n"));
     }
 
@@ -409,13 +409,13 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'locations', array('id' => $loc['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => location_modify() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(3, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = $msg;
-    printmsg($self['error'], 0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     return(array(0, $self['error'] . "\n"));
 }
 

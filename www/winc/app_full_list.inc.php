@@ -52,7 +52,7 @@ global $font_family, $color, $style, $images;
 
 // If the user supplied an array in a string, build the array and store it in $form
 $form = parse_options_string($form);
-printmsg("ws_display in app_full_list.inc.php called with: " . print_r($form,1), 3);
+printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ws_display in app_full_list.inc.php called with: " . print_r($form,1), 3);
 
 $window['title']= "Host List by IP";
 $window['js'] = <<<EOL

@@ -32,7 +32,7 @@ function tag_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => tag_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => tag_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -71,7 +71,7 @@ EOM
     $options['type'] = strtolower(trim($options['type']));
     if (!in_array($options['type'], $allowed_types)) {
         $self['error'] = "ERROR => Invalid tag type: {$options['type']}";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(1, $self['error'] . "\n"));
     }
 
@@ -79,7 +79,7 @@ EOM
     $options['name'] = preg_replace('/\s+/', '-', trim($options['name']));
     if (preg_match('/[@$%^*!\|,`~<>{}]+/', $options['name'])) {
         $self['error'] = "ERROR => Invalid character in tag name";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(1, $self['error'] . "\n"));
     }
     $options['reference'] = (trim($options['reference']));
@@ -90,7 +90,7 @@ EOM
 
     if ($status or !$rows) {
         $self['error'] = "ERROR => Unable to find a {$options['type']} matching {$options['reference']}";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(1, $self['error'] . "\n"));
     }
 
@@ -99,7 +99,7 @@ EOM
 
     foreach ($tags as $t) {
       if (in_array($options['name'], $t)) {
-        printmsg("DEBUG => The tag {$options['name']} is already associated with this {$options['type']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The tag {$options['name']} is already associated with this {$options['type']}!",3);
         $self['error'] = "ERROR => The tag {$options['name']} is already associated with this {$options['type']}!";
         return(array(3, $self['error'] . "\n"));
       }
@@ -109,7 +109,7 @@ EOM
     // Check permissions
     if (! (auth('subnet_add') or auth('host_add')) ) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -117,10 +117,10 @@ EOM
     $id = ona_get_next_id('tags');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(5, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => ID for new tag: $id", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new tag: $id", 3);
 
     // Add the tag
     list($status, $rows) =
@@ -136,13 +136,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => tag_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => {$options['type']} TAG ADDED: {$options['name']} to {$reference['name']}({$reference['id']}).";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -184,7 +184,7 @@ function tag_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmsg("DEBUG => tag_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => tag_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -224,7 +224,7 @@ EOM
     }
 
         if (!$tag['id']) {
-            printmsg("DEBUG => Unable to find tag ({$options['tag']})!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find tag ({$options['tag']})!",3);
             $self['error'] = "ERROR => Unable to find tag ({$options['tag']})!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -236,20 +236,20 @@ EOM
         // Check permissions
         if (! (auth('host_del') or auth('subnet_del')) ) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'tags', array('id' => $tag['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => tag_del() SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(4, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => TAG DELETED: {$tag['name']} from {$tag['type']}[{$tag['reference']}]";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 

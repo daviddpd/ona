@@ -449,7 +449,7 @@ function ws_save($window_name, $form='') {
 
         list($status, $rows, $ptrdomain) = ona_find_domain($ipflip.$arpa);
         if (!$ptrdomain['id']) {
-            printmsg("ERROR => You must first create at least the following DNS domain: {$octets[$octcount]}{$arpa}",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => You must first create at least the following DNS domain: {$octets[$octcount]}{$arpa}",3);
             $self['error'] = "ERROR => You must first create at least the following DNS domain: {$octets[$octcount]}{$arpa}.  You could also create domains for class B or class C level reverse zones.  Click OK to open add domain dialog";
             $response->addScript("alert('{$self['error']}');xajax_window_submit('edit_domain', 'newptrdomainname=>{$octets[$octcount]}{$arpa}', 'editor');");
             return($response->getXML());

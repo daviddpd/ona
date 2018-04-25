@@ -39,7 +39,7 @@ require_once($conf['inc_functions_db']);
 ///////////////////////////////////////////////////////////////////////
 function domain_add($options="") {
     global $conf, $self, $onadb;
-    printmsg("DEBUG => domain_add({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_add({$options}) called", 3);
 
     // Version - UPDATE on every edit!
     $version = '1.07';
@@ -106,7 +106,7 @@ EOM
     if ($options['parent']) {
         list($status, $rows, $parent_domain)  = ona_find_domain($options['parent'],0);
         if (!isset($parent_domain['id'])) {
-            printmsg("DEBUG => The parent domain specified ({$options['parent']}) does not exist!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The parent domain specified ({$options['parent']}) does not exist!", 3);
             $self['error'] = "ERROR => The parent domain specified, {$options['parent']}, does not exist!";
             return(array(5, $self['error'] . "\n"));
         }
@@ -121,7 +121,7 @@ EOM
     list($status, $rows, $record) = ona_get_domain_record($exist_domain);
 
     if ($record['id']) {
-        printmsg("DEBUG => The domain specified ({$record['name']}) already exists!", 3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The domain specified ({$record['name']}) already exists!", 3);
         $self['error'] = "ERROR => The domain specified, {$options['name']}, already exists!";
         return(array(11, $self['error'] . "\n"));
     }
@@ -133,7 +133,7 @@ EOM
         // FIXME: not sure if its needed but this was calling sanitize_domainname, which did not exist
         $domain_name = sanitize_hostname($options['name']);
         if (!is_string($domain_name)) {
-            printmsg("DEBUG => The domain name ({$options['name']}) is invalid!", 3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The domain name ({$options['name']}) is invalid!", 3);
             $self['error'] = "ERROR => The domain name ({$options['name']}) is invalid!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -148,7 +148,7 @@ EOM
 //         list($status, $rows, $ohost) = ona_find_host($primary);
 // 
 //         if (!$ohost['id']) {
-//             printmsg("DEBUG => The primary master host specified ({$primary}) does not exist!", 3);
+//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The primary master host specified ({$primary}) does not exist!", 3);
 //             $self['error'] = "ERROR => The primary master host specified ({$primary}) does not exist!";
 //             return(array(2, $self['error'] . "\n"));
 //         }
@@ -159,7 +159,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -169,10 +169,10 @@ EOM
     $first_id = $id = ona_get_next_id('domains');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id('domains') call failed!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
-    printmsg("DEBUG => domain_add(): New domain ID: {$id} name: {$domain_name}.{$parent_domain['fqdn']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_add(): New domain ID: {$id} name: {$domain_name}.{$parent_domain['fqdn']}", 3);
 
 
     // come up with a serial_number
@@ -207,14 +207,14 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => domain_add() SQL Query failed: " . $self['error'];
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(7, $self['error'] . "\n"));
     }
 
 
     // Return the success notice
     $self['error'] = "INFO => Domain ADDED: {$domain_name}";
-    printmsg($self['error'],0);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $self['error'] . "\n"));
 }
 
@@ -250,7 +250,7 @@ EOM
 ///////////////////////////////////////////////////////////////////////
 function domain_del($options="") {
     global $conf, $self, $onadb;
-    printmsg("DEBUG => domain_del({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_del({$options}) called", 3);
 
     // Version - UPDATE on every edit!
     $version = '1.02';
@@ -295,20 +295,20 @@ EOM
     // Test that the domain actually exists.
     list($status, $tmp_rows, $entry) = ona_get_domain_record($domainsearch);
     if (!$entry['id']) {
-        printmsg("DEBUG => Unable to find a domain record using ID {$options['domain']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a domain record using ID {$options['domain']}!",3);
         $self['error'] = "ERROR => Unable to find a domain record using ID {$options['domain']}!";
         return(array(4, $self['error']. "\n"));
     }
 
     // Debugging
     list($status, $tmp_rows, $tmp_parent) = ona_get_domain_record(array('id'=>$entry['parent_id']));
-    printmsg("DEBUG => Domain selected: {$entry['name']}.{$tmp_parent['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Domain selected: {$entry['name']}.{$tmp_parent['name']}", 3);
 
 
     // Display an error if DNS records are using this domain
     list($status, $rows, $dns) = db_get_records($onadb, 'dns', array('domain_id' => $entry['id']));
     if ($rows) {
-        printmsg("DEBUG => Domain ({$entry['name']}) can't be deleted, it is in use by {$rows} DNS entries!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Domain ({$entry['name']}) can't be deleted, it is in use by {$rows} DNS entries!",3);
         $self['error'] = "ERROR => Domain ({$entry['name']}) can't be deleted, it is in use by {$rows} DNS entries!";
         return(array(5, $self['error'] . "\n"));
     }
@@ -316,7 +316,7 @@ EOM
     // Display an error if it is a parent of other domains
     list($status, $rows, $parent) = db_get_records($onadb, 'domains', array('parent_id' => $entry['id']));
     if ($rows) {
-        printmsg("DEBUG => Domain ({$entry['name']}) can't be deleted, it is the parent of {$rows} other domain(s)!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Domain ({$entry['name']}) can't be deleted, it is the parent of {$rows} other domain(s)!",3);
         $self['error'] = "ERROR => Domain ({$entry['name']}) can't be deleted, it is the parent of {$rows} other domain(s)!";
         return(array(7, $self['error'] . "\n"));
     }
@@ -333,7 +333,7 @@ EOM
         // Check permissions
         if (!auth('advanced')) {
             $self['error'] = "Permission denied!";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(10, $self['error'] . "\n"));
         }
 
@@ -341,7 +341,7 @@ EOM
        list($status, $rows) = db_delete_records($onadb, 'dns_server_domains', array('domain_id' => $entry['id']));
        if ($status) {
            $self['error'] = "ERROR => domain_del() SQL Query (dns_server_domains) failed: {$self['error']}";
-           printmsg($self['error'],0);
+           printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
            return(array(8, $self['error'] . "\n"));
        }
 
@@ -349,7 +349,7 @@ EOM
         list($status, $rows) = db_delete_records($onadb, 'domains', array('id' => $entry['id']));
         if ($status) {
             $self['error'] = "ERROR => domain_del() SQL Query failed: {$self['error']}";
-            printmsg($self['error'],0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
             return(array(9, $self['error'] . "\n"));
         }
 
@@ -358,7 +358,7 @@ EOM
 
         // Return the success notice
         $self['error'] = "INFO => Domain DELETED: {$entry['name']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -416,7 +416,7 @@ EOL;
 ///////////////////////////////////////////////////////////////////////
 function domain_modify($options="") {
     global $conf, $self, $onadb;
-    printmsg("DEBUG => domain_modify({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_modify({$options}) called", 3);
 
     // Version - UPDATE on every edit!
     $version = '1.05';
@@ -487,12 +487,12 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$entry['id']) {
-        printmsg("DEBUG => Unable to find a domain record using ID {$options['domain']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a domain record using ID {$options['domain']}!",3);
         $self['error'] = "ERROR => Unable to find the domain record using {$options['domain']}!";
         return(array(4, $self['error']. "\n"));
     }
 
-    printmsg("DEBUG => domain_modify(): Found entry, {$entry['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_modify(): Found entry, {$entry['name']}", 3);
 
 
     // This variable will contain the updated info we'll insert into the DB
@@ -513,7 +513,7 @@ EOM
         list($status, $rows, $domain) = ona_get_domain_record($parentsearch);
 
         if (!$domain['id']) {
-            printmsg("DEBUG => The parent domain specified ({$options['set_parent']}) does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The parent domain specified ({$options['set_parent']}) does not exist!",3);
             $self['error'] = "ERROR => The parent domain specified ({$options['set_parent']}) does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -534,7 +534,7 @@ EOM
 
         // Test to see that the new entry isnt already used
         if ($domain['id'] and $domain['id'] != $entry['id']) {
-            printmsg("DEBUG => The domain specified ({$options['set_name']}) already exists!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The domain specified ({$options['set_name']}) already exists!",3);
             $self['error'] = "ERROR => The domain specified ({$options['set_name']}) already exists!";
             return(array(6, $self['error']. "\n"));
         }
@@ -559,7 +559,7 @@ EOM
         list($status, $rows, $host) = ona_find_host($SET['primary_master']);
 
         if (!$host['id']) {
-            printmsg("DEBUG => The primary master host specified ({$SET['primary_master']}) does not exist!",3);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The primary master host specified ({$SET['primary_master']}) does not exist!",3);
             $self['error'] = "ERROR => The primary master host specified ({$SET['primary_master']}) does not exist!";
             return(array(2, $self['error'] . "\n"));
         }
@@ -586,7 +586,7 @@ EOM
     // Check permissions
     if (!auth('advanced')) {
         $self['error'] = "Permission denied!";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -598,7 +598,7 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'domains', array('id' => $entry['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => domain_modify() SQL Query failed: {$self['error']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(6, $self['error'] . "\n"));
     }
 }
@@ -623,14 +623,14 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'dns_server_domains', array('domain_id' => $entry['id']), array('rebuild_flag' => 1));
     if ($status) {
         $self['error'] = "ERROR => domain_modify() Unable to update rebuild flags for domain. SQL Query failed: {$self['error']}";
-        printmsg($self['error'],0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(7, $self['error'] . "\n"));
     }
 
     // only print to logfile if a change has been made to the record
     if($more != '') {
-        printmsg($self['error'], 0);
-        printmsg($log_msg, 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
     }
 
     return(array(0, $self['error'] . "\n"));
@@ -667,7 +667,7 @@ function domain_display($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmsg("DEBUG => domain_display({$options}) called", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_display({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -708,7 +708,7 @@ EOM
 
     // Test to see that we were able to find the specified record
     if (!$domain['id']) {
-        printmsg("DEBUG => Unable to find a domain record using ID {$options['domain']}!",3);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a domain record using ID {$options['domain']}!",3);
         $self['error'] = "ERROR => Unable to find the domain record using {$options['domain']}!";
         return(array(4, $self['error']. "\n"));
     }
@@ -717,7 +717,7 @@ EOM
 
 
     // Debugging
-    printmsg("DEBUG => domain_display(): Found {$domain['name']}", 3);
+    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => domain_display(): Found {$domain['name']}", 3);
 
 
 

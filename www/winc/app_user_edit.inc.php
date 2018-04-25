@@ -201,11 +201,11 @@ function ws_save($window_name, $form='') {
         );
         if ($status or !$rows) {
             $self['error'] = "ERROR => user_edit_add ws_save()  SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             $self['error'] = "INFO => User ADDED: {$form['username']} ";
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
 
     }
@@ -232,7 +232,7 @@ function ws_save($window_name, $form='') {
         );
         if ($status ) {
             $self['error'] = "ERROR => user_edit update ws_save()  SQL Query failed: " . $self['error'];
-            printmsg($self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             list($status, $rows, $new_record) = db_get_record($onadb, 'users', array('id' => $user['id']));
@@ -306,8 +306,8 @@ function ws_save($window_name, $form='') {
     else {
         // only print to logfile if a change has been made to the record
         if($more != '') {
-            printmsg($self['error'], 0);
-            printmsg($log_msg, 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
         }
         $js .= "removeElement('{$window_name}');";
         $js .= "xajax_window_submit('app_user_list', xajax.getFormValues('app_user_list_filter_form'), 'display_list');";

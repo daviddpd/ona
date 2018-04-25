@@ -320,11 +320,11 @@ function ws_delete($window_name, $form='') {
         // If the module returned an error code display a popup warning
         $js .= "alert('Delete failed: " . trim($self['error']) . "');";
         $self['error'] = "ERROR => sys_config_list ws_delete() SQL Query failed: " . $self['error'];
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     }
     else {
         $self['error'] = "INFO => Sys Config entry DELETED: {$syscnf['name']} ";
-        printmsg($self['error'], 0);
+        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     }
 
 
