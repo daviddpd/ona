@@ -305,11 +305,11 @@ function ws_delete($window_name, $form='') {
         // If the module returned an error code display a popup warning
         $js .= "alert('Delete failed: " . trim($self['error']) . "');";
         $self['error'] = "ERROR => group_list delete ws_save() SQL Query failed: " . $self['error'];
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     }
     else {
         $self['error'] = "INFO => Group DELETED: {$group['name']} ";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         // Refresh the current list of groups.. it's changed!
         $js .= "xajax_window_submit('$window_name', xajax.getFormValues('{$window_name}_filter_form'), 'display_list');";
     }

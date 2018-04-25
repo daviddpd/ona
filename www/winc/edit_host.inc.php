@@ -605,7 +605,7 @@ function ws_save($window_name, $form='') {
         }
         list($status, $rows, $ptrdomain) = ona_find_domain($ipflip.$arpa);
         if (!$ptrdomain['id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => This operation tried to create a PTR record that is the first in this IP address space.  You must first create at least the following DNS domain: {$octets[$octcount]}.in-addr.arpa",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => This operation tried to create a PTR record that is the first in this IP address space.  You must first create at least the following DNS domain: {$octets[$octcount]}.in-addr.arpa",3);
             $self['error'] = "ERROR => This operation tried to create a PTR record that is the first in this IP address space.<br>You must first create at least the following DNS domain: <b>{$octets[$octcount]}.in-addr.arpa</b>.<br>You could also create domains at deeper level reverse zones if desired.<br>We have opened the add domain dialog for you.";
             $response->addScript("alert('{$self['error']}');xajax_window_submit('edit_domain', 'newptrdomainname=>{$octets[$octcount]}{$arpa}', 'editor');");
             return($response->getXML());

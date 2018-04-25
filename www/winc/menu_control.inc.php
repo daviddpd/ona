@@ -15,7 +15,7 @@ function ws_menu_control_submit($window_name, $ws) {
     // If an array in a string was provided, build the array and store it in $form
     //$form = parse_options_string($form);
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying main menu:", 5);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying main menu:", 5);
 
     $html .= <<<EOL
     <div style="float:left;margin-top: 0px;" title="Click to close menu" onclick="ona_menu_closedown();">
@@ -83,7 +83,7 @@ function ws_menu($window_name, $form='') {
     // If an array in a string was provided, build the array and store it in $form
     $form = parse_options_string($form);
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying tooltip: {$form['tooltip']}", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying tooltip: {$form['tooltip']}", 4);
 
     $menuname = 'get_html_'.$form['menu_name'];
 

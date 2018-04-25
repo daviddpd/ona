@@ -339,11 +339,11 @@ function ws_delete($window_name, $form='') {
             // If the module returned an error code display a popup warning
             $js .= "alert('Delete failed: " . trim($self['error']) . "');";
             $self['error'] = "ERROR => dns_view_list ws_delete() SQL Query failed: " . $self['error'];
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
         }
         else {
             $self['error'] = "INFO => DNS view DELETED: {$recprd['name']} ";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
     }
 

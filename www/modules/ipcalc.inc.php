@@ -22,7 +22,7 @@
 ///////////////////////////////////////////////////////////////////////
 function ipcalc($options) {
     global $conf, $self;
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => ipcalc('.$options.') called', 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => ipcalc('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';

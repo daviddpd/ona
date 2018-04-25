@@ -16,7 +16,7 @@ function ws_tooltips_submit($window_name, $form='') {
     // If an array in a string was provided, build the array and store it in $form
     $form = parse_options_string($form);
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying tooltip: {$form['tooltip']}", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Displaying tooltip: {$form['tooltip']}", 4);
 
     switch ($form['tooltip']) {
         case 'sys_alert':
@@ -374,13 +374,13 @@ function ws_switch_context($window_name, $form='') {
 
     // If the context passed in is in our array, switch
     if (isset($ona_contexts[$form['context_select']])) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Switching to context: {$form['context_select']}",0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Switching to context: {$form['context_select']}",0);
         setcookie("ona_context_name", $form['context_select']);
         $js = "window.location='{$baseURL}';";
     }
     // Otherwise, complain
     else {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => There was an error switching to context: {$form['context_select']}",1);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => There was an error switching to context: {$form['context_select']}",1);
         $js = "alert('The context \'{$form['context_select']}\' is not valid.');";
     }
 
@@ -494,7 +494,7 @@ function ws_logingo($window_name, $form='') {
 
     if ($form['standalone']) $type='Standalone';
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$type}] Attempting login as " . $form['onausername'], 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$type}] Attempting login as " . $form['onausername'], 4);
 
     list($status, $js) = get_authentication($form['onausername'],$form['onapassword']);
 
@@ -502,7 +502,7 @@ function ws_logingo($window_name, $form='') {
         get_perms($form['onausername']);
         if ($form['standalone'] == 'standalone') $js .= "window.location='{$http}{$baseURL}/';";
         $js .= "el('loggedin_user').innerHTML = '{$_SESSION['ona']['auth']['user']['username']}';";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$type}] {$_SESSION['ona']['auth']['user']['username']} has logged in via authtype: {$conf['authtype']}",0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [{$type}] {$_SESSION['ona']['auth']['user']['username']} has logged in via authtype: {$conf['authtype']}",0);
     }
 
     $response = new xajaxResponse();
@@ -2099,7 +2099,7 @@ function ws_interface_nat_save($window_name, $form='') {
         $octets = explode(".",$ipflip);
         list($status, $rows, $ptrdomain) = ona_find_domain($ipflip.".in-addr.arpa");
         if (!$ptrdomain['id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => This operation tried to create a PTR record that is the first in the {$octets[3]}.0.0.0 class A range.  You must first create at least the following DNS domain: {$octets[3]}.in-addr.arpa",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => This operation tried to create a PTR record that is the first in the {$octets[3]}.0.0.0 class A range.  You must first create at least the following DNS domain: {$octets[3]}.in-addr.arpa",3);
             $self['error'] = "ERROR => This operation tried to create a PTR record that is the first in the {$octets[3]}.0.0.0 class A range.  You must first create at least the following DNS domain: {$octets[3]}.in-addr.arpa.  You could also create domains for class B or class C level reverse zones.  Click OK to open add domain dialog";
             $response->addScript("alert('{$self['error']}');xajax_window_submit('edit_domain', 'newptrdomainname=>{$octets[3]}.in-addr.arpa', 'editor');");
             return($response->getXML());

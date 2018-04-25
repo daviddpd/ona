@@ -188,7 +188,7 @@ function ws_save($window_name, $form='') {
     // Don't insert a string of all white space!
     if(trim($form['name']) == "") {
         $self['error'] = "ERROR => Blank names not allowed.";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         $response->addScript("alert('{$self['error']}');");
         return($response->getXML());
     }
@@ -203,7 +203,7 @@ function ws_save($window_name, $form='') {
         // Bail if it is a non editable entry
         if ($original_sysconf['editable'] == 0) {
             $self['error'] = "ERROR => This system config entry is not editable.";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             $response->addScript("alert('{$self['error']}');");
             return($response->getXML());
         }
@@ -217,7 +217,7 @@ function ws_save($window_name, $form='') {
                                      );
             if ($status or !$rows) {
                 $self['error'] = "ERROR => sys_config_edit update ws_save() failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 // Get the record after updating (logging)
@@ -225,13 +225,13 @@ function ws_save($window_name, $form='') {
 
                 // Return the success notice
                 $self['error'] = "INFO => Sys_config UPDATED:{$new_sysconf['name']}: {$new_sysconf['value']}";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
                 $log_msg = "INFO => Sys_config UPDATED:{$new_sysconf['name']} NAME[{$original_sysconf['name']}]{$original_sysconf['value']}=>{$new_sysconf['value']}";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
             }
         } else {
             $self['error'] = "INFO => You have not made a change to the value or description.";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             $response->addScript("alert('{$self['error']}');");
             return($response->getXML());
         }
@@ -242,7 +242,7 @@ function ws_save($window_name, $form='') {
             list($status, $rows, $test) = ona_get_record(array('name' => $form['name']), 'sys_config');
             if ($rows) {
                 $self['error'] = "ERROR => The name you are trying to use already exists.";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
                 $response->addScript("alert('{$self['error']}');");
                 return($response->getXML());
             }
@@ -258,11 +258,11 @@ function ws_save($window_name, $form='') {
 
             if ($status or !$rows) {
                 $self['error'] = "ERROR => Sys_config_edit add ws_save() failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 $self['error'] = "INFO => Sys_config ADDED: {$form['name']} ";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
    }
 

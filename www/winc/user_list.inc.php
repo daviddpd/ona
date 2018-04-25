@@ -116,7 +116,7 @@ function ws_display_list($window_name, $form) {
     $page = 1;
     if ($form['page'] and is_numeric($form['page'])) { $page = $form['page']; }
     
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Displaying user list page: {$page} client url: {$_SESSION['auth']['client']['url']}", 0);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => Displaying user list page: {$page} client url: {$_SESSION['auth']['client']['url']}", 0);
     
     // Calculate the SQL query offset (based on the page being displayed)
     $offset = ($conf['search_results_per_page'] * ($page - 1));
@@ -291,7 +291,7 @@ function ws_delete($window_name, $form='') {
     
     
     // Set the user to inactive (which will make them "dissapear" for all practical purposes)
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "NOTICE => Deleting (disabling) user: {$form} client url: {$_SESSION['auth']['client']['url']}", 0);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "NOTICE => Deleting (disabling) user: {$form} client url: {$_SESSION['auth']['client']['url']}", 0);
     list($status, $rows) = db_update_record($mysql, 'users', array('client_id' => $_SESSION['auth']['client']['id'], 'id' => $form), array('active' => 0));
     
     // If the module returned an error code display a popup warning

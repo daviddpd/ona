@@ -16,7 +16,7 @@ function ws_process_alerts_submit($window_name, $form='') {
     // If an array in a string was provided, build the array and store it in $form
     $form = parse_options_string($form);
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Processing Alerts:", 5);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Processing Alerts:", 5);
 
 // FIXME: this code is called from html_desktop.inc.php.. however it is failing to process for some reason
 // The intent of this code is to be called to display a "message waiting" type icon in the top menu bar.

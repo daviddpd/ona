@@ -192,7 +192,7 @@ function ws_save($window_name, $form='') {
 
     if (!is_numeric($form['number'])) {
         $self['error'] = "ERROR => dhcp_option_editor() Number value required";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
     }
 
     // If you get a numeric in $form, update the record
@@ -213,7 +213,7 @@ function ws_save($window_name, $form='') {
 
         if ($status or !$rows) {
             $self['error'] = "ERROR => dhcp_option update ws_save()  SQL Query failed: " . $self['error'];
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             // Get the record after updating (logging)
@@ -233,8 +233,8 @@ function ws_save($window_name, $form='') {
 
             // only print to logfile if a change has been made to the record
             if($more != '') {
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
             }
         }
     }
@@ -243,10 +243,10 @@ function ws_save($window_name, $form='') {
         $id = ona_get_next_id('dhcp_options');
         if (!$id) {
             $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new dhcp option: $id", 3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ID for new dhcp option: $id", 3);
             list($status, $rows) = db_insert_record($onadb,
                                                 "dhcp_options",
                                                 array('id' => $id,
@@ -257,11 +257,11 @@ function ws_save($window_name, $form='') {
                                                );
             if ($status or !$rows) {
                 $self['error'] = "ERROR => dhcp_option_edit add ws_save()  SQL Query failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 $self['error'] = "INFO => DHCP Option ADDED: {$form['name']} ";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
         }
     }

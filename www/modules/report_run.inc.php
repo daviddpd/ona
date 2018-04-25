@@ -11,7 +11,7 @@ function report_run($options="") {
     // Version - UPDATE on every edit!
     $version = '1.01';
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => report_run({$options}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => report_run({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);

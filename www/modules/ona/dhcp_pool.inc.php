@@ -47,7 +47,7 @@ function dhcp_pool_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.03';
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_add({$options}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -96,7 +96,7 @@ EOM
     // make sure that the start address is actually part of an existing subnet
     list($status, $rows, $subnet) = ona_find_subnet(ip_mangle($options['start'], 'dotted'));
     if (!$rows) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a subnet related to starting address ({$options['start']}).",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a subnet related to starting address ({$options['start']}).",3);
         $self['error'] = "ERROR => Unable to find a subnet related to starting address ({$options['start']}).";
         return(array(1, $self['error'] . "\n"));
     }
@@ -107,7 +107,7 @@ EOM
         list($status, $rows, $fg) = ona_get_dhcp_failover_group_record(array('id' => $options['failover_group']));
 
         if (!$fg['id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The failover_group ({$options['failover_group']}) does not exist!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The failover_group ({$options['failover_group']}) does not exist!",3);
             $self['error'] = "ERROR => The failover_group ({$options['failover_group']}) does not exist!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -122,7 +122,7 @@ EOM
 
     // check that start and end are not the same
     //if ($options['start'] == $options['end']) {
-     //   printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The start and end IP addresses ({$options['start']}) cannot be the same!",3);
+     //   printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The start and end IP addresses ({$options['start']}) cannot be the same!",3);
       //  $self['error'] = "ERROR => The start and end IP addresses ({$options['start']}) cannot be the same!";
        // return(array(2, $self['error'] . "\n"));
     //}
@@ -134,20 +134,20 @@ EOM
 
     // Validate that the IP address supplied isn't the base or broadcast of the subnet
     if ($start_dec == $subnet['ip_addr'] or $end_dec == $subnet['ip_addr']) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's base address (" . ip_mangle($subnet['ip_addr'],'dotted') . ")!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's base address (" . ip_mangle($subnet['ip_addr'],'dotted') . ")!",3);
         $self['error'] = "ERROR => IP address can't be a subnet's base address(" . ip_mangle($subnet['ip_addr'],'dotted') . ")!";
         return(array(7, $self['error'] . "\n"));
     }
 
     if ($start_dec == $net_end or $end_dec == $net_end) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's broadcast address (" . ip_mangle($net_end,'dotted') . ")!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's broadcast address (" . ip_mangle($net_end,'dotted') . ")!",3);
         $self['error'] = "ERROR => IP address can't be the subnet broadcast address (" . ip_mangle($net_end,'dotted') . ")!";
         return(array(8, $self['error'] . "\n"));
     }
 
     // check that start is not after the end
     if ($start_dec > $end_dec) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => The start IP address ({$options['start']}) falls after the end IP address ({$options['end']})!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => The start IP address ({$options['start']}) falls after the end IP address ({$options['end']})!",3);
         $self['error'] = "ERROR => The start IP addresses ({$options['start']}) falls after the end IP address ({$options['end']})!";
         return(array(2, $self['error'] . "\n"));
     }
@@ -156,7 +156,7 @@ EOM
     // check for existing hosts inside the pool range
     list($status, $rows, $interface) = db_get_records($onadb, 'interfaces', 'subnet_id = '.$subnet['id'].' AND ip_addr BETWEEN '.$start_dec.' AND '.$end_dec, '',0);
     if ($rows) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP conflict: Specified range ({$options['start']}-{$options['end']}) encompasses  {$rows} host(s).", 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP conflict: Specified range ({$options['start']}-{$options['end']}) encompasses  {$rows} host(s).", 3);
         $self['error'] = "ERROR => IP conflict: Specified range ({$options['start']}-{$options['end']}) encompasses {$rows} host(s)";
         return(array(4, $self['error'] . "\n"));
     }
@@ -172,7 +172,7 @@ EOM
     //    [ -- old pool --]
     list($status, $rows, $pool) = db_get_record($onadb, 'dhcp_pools', $start_dec.' BETWEEN ip_addr_start AND ip_addr_end');
     if ($rows != 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Pool address conflict! New pool ({$options['start']}-{$options['end']}) starts inside an existing pool.", 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Pool address conflict! New pool ({$options['start']}-{$options['end']}) starts inside an existing pool.", 3);
         $self['error'] = "ERROR => Pool address conflict! New pool ({$options['start']}-{$options['end']}) starts inside an existing pool.";
         return(array(5, $self['error'] . "\n" .
                         "INFO  => Conflicting pool record ID: {$pool['id']}\n"));
@@ -184,7 +184,7 @@ EOM
     //           [ -- old pool --]
     list($status, $rows, $pool) = db_get_record($onadb, 'dhcp_pools', $end_dec.' BETWEEN ip_addr_start AND ip_addr_end');
     if ($rows != 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Pool address conflict! New pool ({$options['start']}-{$options['end']}) ends inside an existing pool.", 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Pool address conflict! New pool ({$options['start']}-{$options['end']}) ends inside an existing pool.", 3);
         $self['error'] = "ERROR => Pool address conflict! New pool ({$options['start']}-{$options['end']}) ends inside an existing pool.";
         return(array(6, $self['error'] . "\n" .
                         "INFO  => Conflicting pool record ID: {$pool['id']}\n"));
@@ -197,7 +197,7 @@ EOM
     //           [ -- old pool --]
     list($status, $rows, $pool) = db_get_record($onadb, 'dhcp_pools', 'ip_addr_start BETWEEN '.$start_dec.' AND '.$end_dec.' OR ip_addr_end BETWEEN '.$start_dec.' AND '.$end_dec);
     if ($rows != 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Pool address conflict! New pool ({$options['start']}-{$options['end']}) would encompass an existing pool.", 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Pool address conflict! New pool ({$options['start']}-{$options['end']}) would encompass an existing pool.", 3);
         $self['error'] = "ERROR => Pool address conflict! New pool ({$options['start']}-{$options['end']}) would encompass an existing pool.";
         return(array(7, $self['error'] . "\n" .
                         "INFO  => Conflicting pool record ID: {$pool['id']}\n"));
@@ -209,7 +209,7 @@ EOM
     // Check permissions
     if (!auth('advanced') or !authlvl($subnet['lvl'])) {
         $self['error'] = "Permission denied!";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(8, $self['error'] . "\n"));
     }
 
@@ -220,10 +220,10 @@ EOM
     $id = ona_get_next_id('dhcp_pools');
     if (!$id) {
         $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(9, $add_to_error . $self['error'] . "\n"));
     }
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_add(): New ID: $id", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_add(): New ID: $id", 3);
 
     // Add the record
     list($status, $rows) =
@@ -246,13 +246,13 @@ EOM
         );
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_pool_add() SQL Query failed: " . $self['error'];
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $add_to_error .  $self['error'] . "\n"));
     }
 
     // Return the success notice
     $self['error'] = "INFO => DHCP pool ADDED: {$options['start']}->{$options['end']}.";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
     return(array(0, $add_to_error . $self['error'] . "\n"));
 }
 
@@ -294,7 +294,7 @@ function dhcp_pool_del($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_del({$options}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_del({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -336,7 +336,7 @@ EOM
 
         // Test to see that we were able to find the specified pool record
         if (!$pool['id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP pool record using ID: {$options['id']}!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP pool record using ID: {$options['id']}!",3);
             $self['error'] = "ERROR => Unable to find the DHCP pool record using ID: {$options['id']}!";
             return(array(2, $self['error']. "\n"));
         }
@@ -347,7 +347,7 @@ EOM
 
 
     } else {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$options['id']} is not a numeric value!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$options['id']} is not a numeric value!",3);
             $self['error'] = "ERROR => {$options['id']} is not a numeric value";
             return(array(3, $self['error'] . "\n"));
     }
@@ -359,20 +359,20 @@ EOM
         // Check permissions
         if (!auth('advanced') or !authlvl($subnet['lvl'])) {
             $self['error'] = "Permission denied!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(4, $self['error'] . "\n"));
         }
 
         list($status, $rows) = db_delete_records($onadb, 'dhcp_pools', array('id' => $pool['id']));
         if ($status or !$rows) {
             $self['error'] = "ERROR => dhcp_pool_del() SQL Query failed: " . $self['error'];
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             return(array(5, $self['error'] . "\n"));
         }
 
         // Return the success notice
         $self['error'] = "INFO => DHCP pool DELETED: {$start}-{$end} from {$subnet['name']}.";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],0);
         return(array(0, $self['error'] . "\n"));
     }
 
@@ -434,7 +434,7 @@ function dhcp_pool_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.03';
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_modify({$options}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_pool_modify({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -488,7 +488,7 @@ EOM
     // get the existing pool to edit
     list($status, $rows, $pool) = db_get_record($onadb, 'dhcp_pools', array('id' => $options['pool']));
     if (!$rows) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP pool record using id: {$options['id']}!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find the DHCP pool record using id: {$options['id']}!",3);
         $self['error'] = "ERROR => Unable to find a pool using id: {$options['pool']}";
         return(array(1, $self['error'] . "\n"));
     }
@@ -505,13 +505,13 @@ EOM
     if($options['set_start']) {
         list($status, $rows, $subnetstart) = ona_find_subnet(ip_mangle($options['set_start'], 'dotted'));
         if (!$rows) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a subnet related to starting address ({$options['set_start']})!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a subnet related to starting address ({$options['set_start']})!",3);
             $self['error'] = "ERROR => Unable to find a subnet related to your starting address of {$options['set_start']}.";
             return(array(1, $self['error'] . "\n"));
         }
 
         if ($subnetstart['id'] != $pool['subnet_id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The starting address ({$options['set_start']}) is not on the same subnet of the pool ({$pool['id']}) you are editing!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The starting address ({$options['set_start']}) is not on the same subnet of the pool ({$pool['id']}) you are editing!",3);
             $self['error'] = "ERROR => The starting address ({$options['set_start']}) is not on the same subnet of the pool ({$pool['id']}) you are editing!";
             return(array(1, $self['error'] . "\n"));
         }
@@ -521,13 +521,13 @@ EOM
     if($options['set_end']) {
         list($status, $rows, $subnetend) = ona_find_subnet(ip_mangle($options['set_end'], 'dotted'));
         if (!$rows) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a subnet related to ending address ({$options['set_end']})!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Unable to find a subnet related to ending address ({$options['set_end']})!",3);
             $self['error'] = "ERROR => Unable to find a subnet related to your ending address of {$options['set_end']}.";
             return(array(1, $self['error'] . "\n"));
         }
 
         if ($subnetend['id'] != $pool['subnet_id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The ending address ({$options['set_end']}) is not on the same subnet of the pool ({$pool['id']}) you are editing!",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The ending address ({$options['set_end']}) is not on the same subnet of the pool ({$pool['id']}) you are editing!",3);
             $self['error'] = "ERROR => The ending address ({$options['set_end']}) is not on the same subnet of the pool ({$pool['id']}) you are editing!";
             return(array(1, $self['error'] . "\n"));
         }
@@ -542,7 +542,7 @@ EOM
         list($status, $rows, $fg) = ona_get_dhcp_failover_group_record(array('id' => $options['set_failover_group']));
 
         if (!$fg['id']) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The failover_group specified ({$options['set_failover_group']}) does not exist",3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The failover_group specified ({$options['set_failover_group']}) does not exist",3);
             $self['error'] = "ERROR => The failover_group specified ({$options['set_failover_group']}) does not exist!";
             return(array(4, $self['error'] . "\n"));
         }
@@ -557,7 +557,7 @@ EOM
 
     // check that start and end are not the same
     //if ($options['set_start'] and $options['set_end'] and $options['set_start'] == $options['set_end']) {
-    //    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The start and end IP addresses (" . ip_mangle($options['set_start'],'dotted') . ") cannot be the same!",3);
+    //    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The start and end IP addresses (" . ip_mangle($options['set_start'],'dotted') . ") cannot be the same!",3);
     //    $self['error'] = "ERROR => The start and end IP addresses (" . ip_mangle($options['set_start'],'dotted') . ") cannot be the same!";
     //    return(array(2, $self['error'] . "\n"));
     //}
@@ -576,20 +576,20 @@ EOM
 
     // Validate that the IP address supplied isn't the base or broadcast of the subnet
     if ($start_dec == $subnet['ip_addr'] or $end_dec == $subnet['ip_addr']) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's base address (" . ip_mangle($subnet['ip_addr'],'dotted') . ")!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's base address (" . ip_mangle($subnet['ip_addr'],'dotted') . ")!",3);
         $self['error'] = "ERROR => IP address can't be a subnet's base address (" . ip_mangle($subnet['ip_addr'],'dotted') . ")!";
         return(array(7, $self['error'] . "\n"));
     }
 
     if ($start_dec == $net_end or $end_dec == $net_end) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's broadcast address (" . ip_mangle($net_end,'dotted') . ")!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP address can't be a subnet's broadcast address (" . ip_mangle($net_end,'dotted') . ")!",3);
         $self['error'] = "ERROR => IP address can't be the subnet broadcast address(" . ip_mangle($net_end,'dotted') . ")!";
         return(array(8, $self['error'] . "\n"));
     }
 
     // check that start is not after the end
     if ($start_dec > $end_dec) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The start IP addresses (" . ip_mangle($start_dec,'dotted') . ") falls after the end IP address (" . ip_mangle($end_dec,'dotted') . ")!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => The start IP addresses (" . ip_mangle($start_dec,'dotted') . ") falls after the end IP address (" . ip_mangle($end_dec,'dotted') . ")!",3);
         $self['error'] = "ERROR => The start IP addresses (" . ip_mangle($start_dec,'dotted') . ") falls after the end IP address(" . ip_mangle($end_dec,'dotted') . ")!";
         return(array(2, $self['error'] . "\n"));
     }
@@ -598,7 +598,7 @@ EOM
     // check for existing hosts inside the pool range
     list($status, $rows, $interface) = db_get_records($onadb, 'interfaces', 'subnet_id = '.$subnet['id'].' AND ip_addr BETWEEN '.$start_dec.' AND '.$end_dec, '',0);
     if ($rows) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP conflict: Specified range (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") encompasses {$rows} host(s)!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => IP conflict: Specified range (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") encompasses {$rows} host(s)!",3);
         $self['error'] = "ERROR => IP conflict: Specified range (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") encompasses {$rows} host(s)";
         return(array(4, $self['error'] . "\n"));
     }
@@ -614,7 +614,7 @@ EOM
     //    [ -- old pool --]
     list($status, $rows, $tmp) = db_get_record($onadb, 'dhcp_pools', 'id != '. $SET['id']. ' AND '.$start_dec.' BETWEEN ip_addr_start AND ip_addr_end');
     if ($rows != 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG =>  Pool address conflict: New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") starts inside an existing pool!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG =>  Pool address conflict: New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") starts inside an existing pool!",3);
         $self['error'] = "ERROR => Pool address conflict! New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") starts inside an existing pool.";
         return(array(5, $self['error'] . "\n" .
                         "INFO  => Conflicting pool record ID: {$tmp['id']}\n"));
@@ -626,7 +626,7 @@ EOM
     //           [ -- old pool --]
     list($status, $rows, $tmp) = db_get_record($onadb, 'dhcp_pools', 'id != '. $SET['id']. ' AND '.$end_dec.' BETWEEN ip_addr_start AND ip_addr_end');
     if ($rows != 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG =>  Pool address conflict: New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") ends inside an existing pool!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG =>  Pool address conflict: New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") ends inside an existing pool!",3);
         $self['error'] = "ERROR => Pool address conflict! New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") ends inside an existing pool.";
         return(array(6, $self['error'] . "\n" .
                         "INFO  => Conflicting pool record ID: {$tmp['id']}\n"));
@@ -639,7 +639,7 @@ EOM
     //           [ -- old pool --]
     list($status, $rows, $tmp) = db_get_record($onadb, 'dhcp_pools', 'id != '. $SET['id']. ' AND (ip_addr_start BETWEEN '.$start_dec.' AND '.$end_dec.' OR ip_addr_end BETWEEN '.$start_dec.' AND '.$end_dec.')');
     if ($rows != 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG =>  Pool address conflict: New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") would encompass an existing pool!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG =>  Pool address conflict: New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") would encompass an existing pool!",3);
         $self['error'] = "ERROR => Pool address conflict! New pool (" . ip_mangle($start_dec,'dotted') . "-" . ip_mangle($end_dec,'dotted') . ") would encompass an existing pool.";
         return(array(7, $self['error'] . "\n" .
                         "INFO  => Conflicting pool record ID: {$tmp['id']}\n"));
@@ -651,7 +651,7 @@ EOM
     // Check permissions
     if (!auth('advanced') or !authlvl($subnet['lvl'])) {
         $self['error'] = "Permission denied!";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(8, $self['error'] . "\n"));
     }
 
@@ -673,7 +673,7 @@ EOM
     list($status, $rows) = db_update_record($onadb, 'dhcp_pools', array('id' => $SET['id']), $SET);
     if ($status or !$rows) {
         $self['error'] = "ERROR => dhcp_pool_modify() SQL Query failed: " . $self['error'];
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $add_to_error . $self['error'] . "\n"));
     }
     $success_start = ip_mangle($SET['ip_addr_start'],'dotted');
@@ -696,8 +696,8 @@ EOM
 
     // only print to logfile if a change has been made to the record
     if($more != '') {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
     }
 
     return(array(0, $add_to_error . $self['error'] . "\n"));
@@ -747,7 +747,7 @@ function dhcp_lease_add($options="") {
     // Version - UPDATE on every edit!
     $version = '1.00';
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_lease_add({$options}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => dhcp_lease_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -802,7 +802,7 @@ EOM
         $mac = trim($mac);
 
         $text = "DHCP Lease Add: IP={$ip} IPTEXT={$line[1]} MAC={$mac} NAME={$name}\n";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$text}",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$text}",3);
     }
 
     if ($options['ip'] and $options['mac']) {
@@ -812,17 +812,17 @@ EOM
         if ($options['name']) $name = $options['name'];
 
         $text = "DHCP Lease Add: IP={$ip} IPTEXT={$line[1]} MAC={$mac} NAME={$name}\n";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$text}",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => {$text}",3);
 
     }
 
     // Check to see if the IP is already in the database
 //    list($status, $rows, $lease) = db_get_record($mysql, "dhcp_leases", array('IP_ADDRESS' => $ip));
 //    if ($rows) {
-//        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => updating existing record", 2);
+//        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => updating existing record", 2);
 //        list($status, $rows)  = db_update_record($mysql, "dhcp_leases", array('IP_ADDRESS' => $ip), array('MAC' => $mac, 'HOSTNAME' => $name));
 //    } else {
-//        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => inserting new record", 2);
+//        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => inserting new record", 2);
 //        list($status, $rows)  = db_insert_record($mysql, "dhcp_leases", array('IP_ADDRESS' => $ip,
 //                                                                              'IP_TEXT' => $iptext,
 //                                                                              'MAC' => $mac,

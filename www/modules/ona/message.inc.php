@@ -60,7 +60,7 @@ function message_add($options="") {
     // 2 = yellow or medium
     // 3 = green or low
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => message_add({$options}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => message_add({$options}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -125,7 +125,7 @@ EOM
 
     // If we didn't get a record then exit
     if (!$host['id'] and !$subnet['id']) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No host or subnet found!",3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No host or subnet found!",3);
         $self['error'] = "ERROR => No host or subnet found!";
         return(array(4, $self['error'] . "\n"));
     }
@@ -165,7 +165,7 @@ EOM
     );
     if ($status or !$rows) {
         $self['error'] = "ERROR => message_add() SQL Query failed: " . $self['error'];
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(6, $self['error'] . "\n"));
     }
 

@@ -115,7 +115,7 @@ function db_pconnect($type, $context_name) {
     // check if the context name passed in is in our array or not
     if (!isset($ona_contexts[$context_name])) {
         setcookie("ona_context_name", $conf['default_context']);
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Unable to find context name '{$context_name}' in the ona_contexts configuration. Reverting back to '{$conf['default_context']}' context.",0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Unable to find context name '{$context_name}' in the ona_contexts configuration. Reverting back to '{$conf['default_context']}' context.",0);
         echo "ERROR => Unable to find context name '{$context_name}' in the ona_contexts configuration.  Please check {$base}/local/config/database_settings.inc.php is configured properly.  Reverting back to '{$conf['default_context']}' context.";
         return $object;
     }
@@ -153,7 +153,7 @@ function db_pconnect($type, $context_name) {
 
             // If the connection didn't work, bail.
             if (!$ok1 or !$ok2 or $ok3)
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$self['db_type']} DB connection failed: " . $object->ErrorMsg(), 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$self['db_type']} DB connection failed: " . $object->ErrorMsg(), 0);
             // Otherwise return the object.
             else {
                 // MP: not sure how this behaves on other databases.. should work for mysql and postgres
@@ -166,7 +166,7 @@ function db_pconnect($type, $context_name) {
 
     // If it still isn't connected, return an error.
     if ($connected == 0)
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$self['db_type']} DB connection failed after 5 tries!  Maybe server is down?", 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$self['db_type']} DB connection failed after 5 tries!  Maybe server is down?", 0);
 
     return $object;
 }
@@ -195,7 +195,7 @@ function get_content($name) {
     global $onadb;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => get_content($name) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => get_content($name) called", 3);
 
     // Get the content to be displayed on this page
     list($status, $rows, $content) = db_get_record($onadb, 'content', array('name' => $name));
@@ -377,14 +377,14 @@ function db_insert_record($dbh=0, $table="", $insert="") {
     @$self['db_insert_record_count']++;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_insert_record(\$dbh, $table, \$insert) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_insert_record(\$dbh, $table, \$insert) called", 3);
 
     // Return an error if insufficient input was received
     if ( (!$dbh) or (!$dbh->IsConnected()) or
          (!$table) or
          (!$insert) ) {
         $self['error'] = "ERROR => db_insert_record() received invalid input";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(1, 0));
     }
 
@@ -404,7 +404,7 @@ function db_insert_record($dbh=0, $table="", $insert="") {
     $q .= " )";
 
     // Run the SQL
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_insert_record() Running query: $q", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_insert_record() Running query: $q", 4);
     $ok = $dbh->Execute($q);
     $error = $dbh->ErrorMsg();
 
@@ -415,7 +415,7 @@ function db_insert_record($dbh=0, $table="", $insert="") {
     }
 
     // Otherwise return success
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_insert_record() Insert was successful", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_insert_record() Insert was successful", 4);
     return(array(0, 1));
 }
 
@@ -476,13 +476,13 @@ function db_update_record($dbh=0, $table="", $where="", $insert="") {
     @$self['db_update_record_count']++;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_update_record(\$dbh, $table, \$where, \$insert) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_update_record(\$dbh, $table, \$where, \$insert) called", 3);
 
     // Return an error if insufficient input was received
     if ( (!$dbh) or (!$dbh->IsConnected()) or
          (!$table) or (!$where) or (!$insert) ) {
         $self['error'] = "ERROR => db_update_record() received invalid input";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(1, 0));
     }
 
@@ -512,13 +512,13 @@ function db_update_record($dbh=0, $table="", $where="", $insert="") {
     $q  = "UPDATE {$table} SET {$set} WHERE {$where_str}";
 
     // Execute the query
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_update_record() Running query: $q", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_update_record() Running query: $q", 4);
     $rs = $dbh->Execute($q);
 
     // See if the query worked or not
     if ($rs === false) {
         $self['error'] = 'ERROR => SQL query failed: ' . $dbh->ErrorMsg();
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(2, 0));
     }
 
@@ -528,7 +528,7 @@ function db_update_record($dbh=0, $table="", $where="", $insert="") {
     $rs->Close();
 
     // Return Success
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_update_record() Query updated {$rows} rows", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_update_record() Query updated {$rows} rows", 4);
     return(array(0, $rows));
 }
 
@@ -584,13 +584,13 @@ function db_delete_records($dbh=0, $table="", $where="") {
     @$self['db_delete_records_count']++;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_delete_records(\$dbh, $table, \$where) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_delete_records(\$dbh, $table, \$where) called", 3);
 
     // Return an error if insufficient input was received
     if ( empty($dbh) or (!$dbh->IsConnected()) or
          empty($table) or empty($where) ) {
         $self['error'] = "ERROR => db_delete_records() received invalid input";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(1, 0));
     }
 
@@ -619,7 +619,7 @@ function db_delete_records($dbh=0, $table="", $where="") {
     // See if the query worked or not
     if ($rs === false) {
         $self['error'] = 'ERROR => SQL query failed: ' . $dbh->ErrorMsg();
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(2, 0, array()));
     }
 
@@ -629,7 +629,7 @@ function db_delete_records($dbh=0, $table="", $where="") {
     $rs->Close();
 
     // Return Success
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_delete_records() Query deleted {$rows} row(s)", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_delete_records() Query deleted {$rows} row(s)", 4);
     return(array(0, $rows));
 }
 
@@ -710,13 +710,13 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
     @$self['db_get_record_count']++;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record(\$dbh, \$where, $table, $order) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record(\$dbh, \$where, $table, $order) called", 3);
 
     // Return an error if insufficient input was received
     if ( (!$dbh) or (!$dbh->IsConnected()) or
          (!$table) or (!$where) ) {
         $self['error'] = "ERROR => db_get_record() received invalid input";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(1, 0, array()));
     }
 
@@ -754,7 +754,7 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
         $self['cache']["db_get_{$table}_record"]['q'] = $q;
         $self['cache']["db_get_{$table}_record"]['row'] = 0;
 
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() Row offset reset for table: {$table}", 5);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() Row offset reset for table: {$table}", 5);
     }
     // If reset_cache == 1 we don't use cache, and go to row 0
     else if (isset($self['db_get_record']['reset_cache']) and ($self['db_get_record']['reset_cache'])) {
@@ -780,7 +780,7 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
 
     // Select the record from the DB, don't cache results
     if ($use_cache == 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() running query: {$q}", 5);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() running query: {$q}", 5);
         $rs = $dbh->Execute($q);
     }
     // Select the record from the DB, cache results
@@ -790,7 +790,7 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
             $self['db_get_record']['secs_to_cache'] = 60;
         }
 
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() running (cached) query: {$q}", 5);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() running (cached) query: {$q}", 5);
         $rs = $dbh->CacheExecute($self['db_get_record']['secs_to_cache'], $q);
     }
 
@@ -798,7 +798,7 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
     // See if the query worked or not
     if ($rs === false) {
         $self['error'] = 'ERROR => SQL query failed: ' . $dbh->ErrorMsg();
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(2, 0, array()));
     }
 
@@ -810,7 +810,7 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
     // If there were no rows, return 0 rows
     if (!$rows) {
         // Query returned no results
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() Query returned no results", 4);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() Query returned no results", 4);
         return(array(0, 0, array()));
     }
 
@@ -827,7 +827,7 @@ function db_get_record($dbh=0, $table="", $where="", $order="") {
     }
 
     // Return the row
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() Returning record " . ($self['cache']["db_get_{$table}_record"]['row'] + 1) . " of " . $rows, 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_record() Returning record " . ($self['cache']["db_get_{$table}_record"]['row'] + 1) . " of " . $rows, 4);
     $array = $rs->FetchRow();
     $rs->Close();
     return(array(0, $rows, $array));
@@ -893,13 +893,13 @@ function db_get_records($dbh=0, $table="", $where="", $order="", $rows=-1, $offs
     @$self['db_get_records_count']++;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records(\$dbh, \$where, $table, $order, $rows, $offset) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records(\$dbh, \$where, $table, $order, $rows, $offset) called", 3);
 
     // Return an error if insufficient input was received
     if ( (!$dbh) or (!$dbh->IsConnected()) or
          (!$table) or (!$where) ) {
         $self['error'] = "ERROR => db_get_records() received invalid input";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(1, 0, array()));
     }
 
@@ -937,14 +937,14 @@ function db_get_records($dbh=0, $table="", $where="", $order="", $rows=-1, $offs
 
 
     // Select the records from the DB
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records() running query: {$q}", 5);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records() running query: {$q}", 5);
     $rs = $dbh->SelectLimit($q, $rows, $offset);
 
 
     // See if the query worked or not
     if ($rs === false) {
         $self['error'] = 'ERROR => SQL query failed: ' . $dbh->ErrorMsg();
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 3);
         return(array(2, 0, array()));
     }
 
@@ -959,7 +959,7 @@ function db_get_records($dbh=0, $table="", $where="", $order="", $rows=-1, $offs
     // If there were no rows, return 0 rows
     if (!$rows) {
         // Query returned no results
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records() Query returned no results", 4);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records() Query returned no results", 4);
         return(array(0, 0, array()));
     }
 
@@ -970,7 +970,7 @@ function db_get_records($dbh=0, $table="", $where="", $order="", $rows=-1, $offs
     }
 
     // Return the row
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records() Returning records", 4);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => db_get_records() Returning records", 4);
     $rs->Close();
     return(array(0, $rows, $recordset));
 }
@@ -1303,7 +1303,7 @@ function ona_get_dns_server_domain_record($array) {
 //     global $self;
 //
 //     // Debugging
-//     printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_get_configtype_deref($search) called", 3);
+//     printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_get_configtype_deref($search) called", 3);
 //
 //     // Return 0 if there was no input
 //     if (!$search) { return(0); }
@@ -1316,7 +1316,7 @@ function ona_get_dns_server_domain_record($array) {
 //               WHERE IP.CONFIG_TYPE.CONFIG_TYPE_ID=' . $onadb->qstr($search);
 //         $rs = $onadb->Execute($q);
 //         if ($rs === false) {
-//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => SQL query failed: ' . $onadb->ErrorMsg(), 3);
+//             printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => SQL query failed: ' . $onadb->ErrorMsg(), 3);
 //             return(0);
 //         }
 //         if ($rs->RecordCount() >= 1) {
@@ -1333,7 +1333,7 @@ function ona_get_dns_server_domain_record($array) {
 //               WHERE IP.CONFIG_TYPE.CONFIG_TYPE_NAME=' . $onadb->qstr($search);
 //         $rs = $onadb->Execute($q);
 //         if ($rs === false) {
-//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => SQL query failed: ' . $onadb->ErrorMsg(), 3);
+//             printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'ERROR => SQL query failed: ' . $onadb->ErrorMsg(), 3);
 //             return(0);
 //         }
 //         if ($rs->RecordCount() >= 1) {
@@ -1370,7 +1370,7 @@ function ona_get_next_id($tablename) {
     global $onadb, $self;
 
     // Debugging
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_get_next_id() called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_get_next_id() called", 3);
 
     // Find the sequence value for the specified tablename
     list($status, $rows, $record) = db_get_record($onadb, 'sequences', array('name' => $tablename));
@@ -1387,19 +1387,19 @@ function ona_get_next_id($tablename) {
 
         if ($status) {
             $self['error'] = 'ERROR => ona_get_next_id() Unable to update sequence value!';
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 4);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 4);
             return(0);
         }
 
         // If we got an ID, return it.
         if ($record['seq'] > 0) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_get_next_id() Returning ID: " . $record['seq'], 4);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_get_next_id() Returning ID: " . $record['seq'], 4);
             return($record['seq']);
         }
         // Just in case...
         else {
             $self['error'] = 'ERROR => ona_get_next_id() Something went wrong!';
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 4);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 4);
             return(0);
         }
     }
@@ -1489,13 +1489,13 @@ function ona_build_domain_name($search='') {
 ///////////////////////////////////////////////////////////////////////
 function ona_find_host($search="") {
     global $conf, $self, $onadb;
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_host({$search}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_host({$search}) called", 3);
 
     // By record ID?
     if (is_numeric($search)) {
         list($status, $rows, $host) = ona_get_host_record(array('id' => $search));
         if ($rows) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_host({$search}) called, found: {$host['fqdn']}", 3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_host({$search}) called, found: {$host['fqdn']}", 3);
             return(array($status, $rows, $host));
         }
     }
@@ -1523,7 +1523,7 @@ function ona_find_host($search="") {
     if (strstr($search,'/')) {
         list($dnsview,$search) = explode('/', $search);
         list($status, $rows, $view) = db_get_record($onadb, 'dns_views', array('name' => strtoupper($dnsview)));
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_host: DNS view [{$dnsview}] was not found, using default", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_host: DNS view [{$dnsview}] was not found, using default", 2);
         if(!$rows) $view['id'] = 0;
     }
 
@@ -1535,11 +1535,11 @@ function ona_find_host($search="") {
     // Find the 'first', domain name piece of $search
     list($status, $rows, $domain) = ona_find_domain($search,0);
     if (!isset($domain['id'])) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Unable to determine domain name portion of ({$search})!", 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => Unable to determine domain name portion of ({$search})!", 3);
         $self['error'] = "ERROR => Unable to determine domain name portion of ({$search})!";
         return(array(3, $self['error'] . "\n"));
     }
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$search}) returned: {$domain['fqdn']}", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$search}) returned: {$domain['fqdn']}", 3);
 
     // Now find what the host part of $search is
     $hostname = str_replace(".{$domain['fqdn']}", '', $search);
@@ -1610,7 +1610,7 @@ function ona_find_domain($fqdn="", $returndefault=0) {
     global $conf;
     $status=1;
     $fqdn = strtolower($fqdn);
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) called", 3);
 
     // lets test out if it has a / in it to strip the view name portion
     if (strstr($fqdn,'/')) {
@@ -1631,7 +1631,7 @@ function ona_find_domain($fqdn="", $returndefault=0) {
             list($status, $rowsa, $record) = ona_get_domain_record(array('name' => $name));
             if ($rowsa) {
                 $domain = $record;
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Found: {$domain['fqdn']}", 3);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Found: {$domain['fqdn']}", 3);
                 $foundone = 1;
             }
         }
@@ -1641,7 +1641,7 @@ function ona_find_domain($fqdn="", $returndefault=0) {
             list($status, $rowsb, $record) = ona_get_domain_record(array('name' => $name, 'parent_id' => $domain['id']));
             if ($rowsb) {
                 $domain = $record;
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Found with parent: {$domain['fqdn']}", 3);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Found with parent: {$domain['fqdn']}", 3);
                 $foundone = 1;
                 $name = '';
             } else {
@@ -1649,7 +1649,7 @@ function ona_find_domain($fqdn="", $returndefault=0) {
                 list($status, $rowsb, $record) = ona_get_domain_record(array('name' => "{$name}.{$domain['fqdn']}", 'parent_id' => 0));
                 if ($rowsb) {
                     $domain = $record;
-                    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Found with parent: {$domain['fqdn']}", 3);
+                    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Found with parent: {$domain['fqdn']}", 3);
                     $foundone = 1;
                     $name = '';
                 }
@@ -1662,7 +1662,7 @@ function ona_find_domain($fqdn="", $returndefault=0) {
 //     if ($returndefault=1) {
 //         // If we don't have a domain yet, lets assume $fqdn is a basic hostname, and return the default domain
 //         if (!array_key_exists('id', $domain)) {
-//             printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Using system default domain: {$conf['dns_defaultdomain']}", 3);
+//             printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$fqdn}) Using system default domain: {$conf['dns_defaultdomain']}", 3);
 //             list($status, $rows, $record) = ona_get_domain_record(array('name' => $conf['dns_defaultdomain']));
 //             if($rows)
 //                 $domain = $record;
@@ -1702,7 +1702,7 @@ function ona_find_domain($fqdn="", $returndefault=0) {
 ///////////////////////////////////////////////////////////////////////
 function ona_find_dns_record($search="",$type='',$int_id=0) {
     global $conf, $self, $onadb;
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called", 3);
     $type   = strtoupper($type);
     $search = strtolower($search);
 
@@ -1710,7 +1710,7 @@ function ona_find_dns_record($search="",$type='',$int_id=0) {
     if (is_numeric($search)) {
         list($status, $rows, $dns) = ona_get_dns_record(array('id' => $search));
         if ($rows) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called, found: {$dns['fqdn']}({$dns['type']})", 3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called, found: {$dns['fqdn']}({$dns['type']})", 3);
             return(array($status, $rows, $dns));
         }
     }
@@ -1731,7 +1731,7 @@ function ona_find_dns_record($search="",$type='',$int_id=0) {
 
     // Find the domain name piece of $search
     list($status, $rows, $domain) = ona_find_domain($search);
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$search}) returned: {$domain['fqdn']}", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_domain({$search}) returned: {$domain['fqdn']}", 3);
 
     // Now find what the host part of $search is
     $hostname = str_replace(".{$domain['fqdn']}", '', $search);
@@ -1753,7 +1753,7 @@ function ona_find_dns_record($search="",$type='',$int_id=0) {
 
     if ($rows) {
         // Return good status, one row, and $dns array
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called, found: {$dns['fqdn']}({$dns['type']})", 3);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called, found: {$dns['fqdn']}({$dns['type']})", 3);
         return(array(0, 1, $dns));
     }
 
@@ -1768,7 +1768,7 @@ function ona_find_dns_record($search="",$type='',$int_id=0) {
         'dns_id'      => 0
     );
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called, Nothing found, returning fake entry: {$dns['fqdn']}({$dns['type']})", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dns_record({$search}) called, Nothing found, returning fake entry: {$dns['fqdn']}({$dns['type']})", 3);
     return(array(0, 1, $dns));
 }
 
@@ -1808,7 +1808,7 @@ function ona_find_dns_record($search="",$type='',$int_id=0) {
 //    2  :: No (unique?) match found
 ///////////////////////////////////////////////////////////////////////
 function ona_find_location($search="") {
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location({$search}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location({$search}) called", 3);
 
     // Validate input
     if ($search == "") {
@@ -1821,7 +1821,7 @@ function ona_find_location($search="") {
         list($status, $rows, $record) = ona_get_location_record(array('id' => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by id", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by id", 2);
             return(array(0, $rows, $record));
         }
 
@@ -1829,7 +1829,7 @@ function ona_find_location($search="") {
         list($status, $rows, $record) = ona_get_location_record(array('zip_code' => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by zip code search", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by zip code search", 2);
             return(array(0, $rows, $record));
         }
     }
@@ -1840,7 +1840,7 @@ function ona_find_location($search="") {
         list($status, $rows, $record) = ona_get_location_record(array($field => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by $field search", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by $field search", 2);
             return(array(0, $rows, $record));
         }
     }
@@ -1851,7 +1851,7 @@ function ona_find_location($search="") {
         list($status, $rows, $record) = ona_get_location_record(array($field => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by UPPER($field) search", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by UPPER($field) search", 2);
             return(array(0, $rows, $record));
         }
     }
@@ -1862,13 +1862,13 @@ function ona_find_location($search="") {
         list($status, $rows, $record) = ona_get_location_record(array($field => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by LOWER($field) search", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() found location record by LOWER($field) search", 2);
             return(array(0, $rows, $record));
         }
     }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() couldn't find a unique location record with specified search criteria", 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_location() couldn't find a unique location record with specified search criteria", 2);
     return(array(2, 0, array()));
 }
 
@@ -1908,7 +1908,7 @@ function ona_find_location($search="") {
 //    6  :: More than one interface has that MAC address
 ///////////////////////////////////////////////////////////////////////
 function ona_find_interface($search="") {
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface({$search}) called", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface({$search}) called", 3);
 
     // Validate input
     if ($search == "")
@@ -1921,7 +1921,7 @@ function ona_find_interface($search="") {
             list($status, $rows, $record) = ona_get_interface_record("{$field} like '{$search}'");
             // If we got it, return it
             if ($status == 0 and $rows == 1) {
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() found interface record by {$field}", 2);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() found interface record by {$field}", 2);
                 return(array(0, $rows, $record));
             }
         }
@@ -1933,16 +1933,16 @@ function ona_find_interface($search="") {
         list($status, $rows, $record) = ona_get_interface_record("ip_addr like '{$ip}'");
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() found record by IP address", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() found record by IP address", 2);
             return(array(0, $rows, $record));
         }
 
         // Otherwise return an error
         if ($rows == 0) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No interface has the IP address: $search", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => No interface has the IP address: $search", 2);
             return(array(3, $rows, array()));
         }
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => More than one interface has the IP address: $search", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => More than one interface has the IP address: $search", 2);
         return(array(4, $rows, array()));
     }
 
@@ -1956,21 +1956,21 @@ function ona_find_interface($search="") {
 
         // If we got it, return it
         if (!$status and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() found record by MAC address", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() found record by MAC address", 2);
             return(array(0, $rows, $record));
         }
 
         // Otherwise return an error
         if ($rows == 0) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => No interface has the MAC address: $search", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => No interface has the MAC address: $search", 2);
             return(array(5, 0, array()));
         }
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() More than one interface has the MAC address: " . mac_mangle($mac, 1), 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() More than one interface has the MAC address: " . mac_mangle($mac, 1), 0);
         return(array(6, 0, array()));
     }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() couldn't find a unique interface record with specified search criteria", 1);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_interface() couldn't find a unique interface record with specified search criteria", 1);
     return(array(2, 0, array()));
 }
 
@@ -2017,7 +2017,7 @@ function ona_find_subnet($search="") {
             list($status, $rows, $record) = ona_get_subnet_record("$field = $search");
             // If we got it, return it
             if ($status == 0 and $rows == 1) {
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet() found subnet record by $field $search", 2);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet() found subnet record by $field $search", 2);
                 return(array(0, $rows, $record));
             }
         }
@@ -2045,7 +2045,7 @@ function ona_find_subnet($search="") {
 
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet() found record by IP address", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet() found record by IP address", 2);
             return(array(0, $rows, $record));
         }
 
@@ -2053,11 +2053,11 @@ function ona_find_subnet($search="") {
         if ($rows == 0) {
             $ip = ip_mangle($ip, 2);
             $self['error'] = "NOTICE => IP supplied, $ip, does not belong to any existing subnet!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
             return(array(3, $rows, array()));
         }
         $self['error'] = "NOTICE => IP supplied, $ip, belongs to more than one subnet! Data corruption?";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
         return(array(4, $rows, array()));
     }
 
@@ -2066,13 +2066,13 @@ function ona_find_subnet($search="") {
     list($status, $rows, $record) = ona_get_subnet_record(array('name' => strtoupper($search)));
     // If we got it, return it
     if ($status == 0 and $rows == 1) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet() found subnet record by its name", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet() found subnet record by its name", 2);
         return(array(0, $rows, $record));
     }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => couldn't find a unique subnet record with specified search criteria";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
     return(array(2, 0, array()));
 }
 
@@ -2115,7 +2115,7 @@ function ona_find_device($search="") {
         list($status, $rows, $record) = ona_get_device_record(array('id' => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device() found device record by id", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device() found device record by id", 2);
             return(array(0, $rows, $record));
         }
     }
@@ -2131,7 +2131,7 @@ function ona_find_device($search="") {
 
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device() found record by IP address", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device() found record by IP address", 2);
             return(array(0, $rows, $record));
         }
 
@@ -2139,17 +2139,17 @@ function ona_find_device($search="") {
         if ($rows == 0) {
             //$ip = ip_mangle($ip, 'dotted');
             $self['error'] = "NOTICE => ona_find_device() was unable to locate the record by IP or fqdn";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
             return(array(3, $rows, array()));
         }
 //        $self['error'] = "NOTICE => ona_find_device() found multiple matching records when searching by IP or fqdn. Data corruption?";
-//        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+//        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
 //        return(array(4, $rows, array()));
 //    }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => ona_find_device() couldn't find a unique device record with specified search criteria";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
     return(array(2, 0, array()));
 }
 
@@ -2195,7 +2195,7 @@ function ona_find_device_type($search="") {
         list($status, $rows, $record) = ona_get_device_type_record(array('id' => $search));
         // If we got it, return it
         if ($status == 0  and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device_type() found device_type record by id", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device_type() found device_type record by id", 2);
             return(array(0, $rows, $record));
         }
 /* PK: this was the original code...
@@ -2203,7 +2203,7 @@ function ona_find_device_type($search="") {
             list($status, $rows, $record) = ona_get_model_record(array($field => $search));
             // If we got it, return it
             if ($status == 0 and $rows == 1) {
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device() found device record by $field", 2);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device() found device record by $field", 2);
                 return(array(0, $rows, $record));
             }
         }*/
@@ -2221,14 +2221,14 @@ function ona_find_device_type($search="") {
     }
     // If we got it, return it
     if ($status == 0 and $rows == 1) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device_type() found device_type record by model name", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_device_type() found device_type record by model name", 2);
         return(array(0, $rows, $record));
     }
 
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => couldn't find a unique device_type record with specified search criteria";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
     return(array(2, 0, array()));
 
 }
@@ -2275,7 +2275,7 @@ function ona_find_subnet_type($search="") {
         list($status, $rows, $record) = ona_get_subnet_type_record(array($field => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet_type() found device record by $field", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet_type() found device record by $field", 2);
             return(array($status, $rows, $record));
         }
     }
@@ -2283,19 +2283,19 @@ function ona_find_subnet_type($search="") {
     // It's a string - do several sql queries and see if we can get a unique match
     list($status, $rows, $record) = ona_get_subnet_type_record(array('display_name' => $search));
     if ($status == 0 and $rows == 1) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet_type() found subnet_type record by its name", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet_type() found subnet_type record by its name", 2);
         return(array(0, $rows, $record));
     }
 
     list($status, $rows, $record) = ona_get_subnet_type_record(array('short_name' => $search));
     if ($status == 0 and $rows == 1) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet_type() found subnet_type record by its name", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_subnet_type() found subnet_type record by its name", 2);
         return(array(0, $rows, $record));
     }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => Subnet-type not found";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
     return(array(2, 0, array()));
 }
 
@@ -2336,7 +2336,7 @@ function ona_find_custom_attribute($search="") {
         list($status, $rows, $record) = ona_get_custom_attribute_record(array($field => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute() found custom attribute record by $field", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute() found custom attribute record by $field", 2);
             return(array(0, $rows, $record));
         }
     }
@@ -2344,25 +2344,25 @@ function ona_find_custom_attribute($search="") {
     // Split the description based on the () enclosed type
     list($ca_type, $ca_value) = preg_split("/\(|\)/",$search);
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute(): Split is {$ca_type},{$ca_value}", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute(): Split is {$ca_type},{$ca_value}", 3);
 
 
     // It's a string - do several sql queries and see if we can get a unique match
     list($status, $rows, $type) = ona_get_custom_attribute_type_record(array('name' => trim($ca_type)));
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute(): Found {$rows} custom attribute type record", 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute(): Found {$rows} custom attribute type record", 3);
 
     // Find the ID using the type id and value
     list($status, $rows, $record) = ona_get_custom_attribute_record(array('value' => $ca_value,'custom_attribute_type_id' => $type['id']));
     // If we got it, return it
     if ($status == 0 and $rows == 1) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute(): Found custom attribute record by its full name", 2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_custom_attribute(): Found custom attribute record by its full name", 2);
         return(array(0, $rows, $record));
     }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => couldn't find a unique custom attribute record with specified search criteria";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
     return(array(2, 0, array()));
 }
 
@@ -2408,7 +2408,7 @@ function ona_find_dhcp_option($search="") {
         list($status, $rows, $record) = ona_get_dhcp_option_record(array($field => $search));
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dhcp_option(): found type record by $field", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dhcp_option(): found type record by $field", 2);
             return(array(0, $rows, $record));
         }
     }
@@ -2419,14 +2419,14 @@ function ona_find_dhcp_option($search="") {
 
         // If we got it, return it
         if ($status == 0 and $rows == 1) {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dhcp_option(): Found type record -> {$record['display_name']}", 2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_dhcp_option(): Found type record -> {$record['display_name']}", 2);
             return(array(0, $rows, $record));
         }
     }
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => couldn't find a unique DHCP option record with specified search criteria";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 2);
     return(array(2, 0, array()));
 }
 
@@ -2476,7 +2476,7 @@ function ona_find_vlan($vlan_search="", $campus_search="") {
         foreach (array('name', 'id') as $field) {
             list($status, $rows, $campus) = ona_get_vlan_campus_record(array($field => $search));
             if (!$status and $rows == 1) {
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_vlan() found vlan campus record by $field", 2);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => ona_find_vlan() found vlan campus record by $field", 2);
                 break;
             }
             else
@@ -2501,7 +2501,7 @@ function ona_find_vlan($vlan_search="", $campus_search="") {
 
     // We didn't find it - return and error code, 0 matches, and an empty record.
     $self['error'] = "NOTICE => couldn't find a unique vlan record with specified search criteria";
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 1);
     return(array(2, 0, array()));
 }
 

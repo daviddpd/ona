@@ -141,7 +141,7 @@ function ws_save($window_name, $form='') {
     // Don't insert a string of all white space!
     if(trim($form['manufacturer_name']) == "") {
         $self['error'] = "ERROR => Blank names not allowed.";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         $response->addScript("alert('{$self['error']}');");
         return($response->getXML());
     }
@@ -161,7 +161,7 @@ function ws_save($window_name, $form='') {
                                      );
             if ($status or !$rows) {
                 $self['error'] = "ERROR => manufacturer_edit update ws_save() failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
                 $response->addScript("alert('{$self['error']}');");
             }
             else {
@@ -170,9 +170,9 @@ function ws_save($window_name, $form='') {
     
                 // Return the success notice
                 $self['error'] = "INFO => Manufacturer UPDATED:{$new_manufacturer['id']}: {$new_manufacturer['name']}";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
                 $log_msg = "INFO => Manufacturer UPDATED:{$new_manufacturer['id']}: name[{$original_manufacturer['name']}=>{$new_manufacturer['name']}]";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
             }
         }
     }
@@ -182,10 +182,10 @@ function ws_save($window_name, $form='') {
 
         if (!$id) {
             $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => id for new manufacturer record: $id", 3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => id for new manufacturer record: $id", 3);
             list($status, $rows) = db_insert_record($onadb, 
                                         "manufacturers", 
                                         array('id' => $id, 
@@ -193,11 +193,11 @@ function ws_save($window_name, $form='') {
 
             if ($status or !$rows) {
                 $self['error'] = "ERROR => manufacturer_edit add ws_save() failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 $self['error'] = "INFO => Manufacturer ADDED: {$form['manufacturer_name']} ";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             } 
         }
     }

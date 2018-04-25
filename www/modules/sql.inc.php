@@ -25,7 +25,7 @@ function ona_sql($options="") {
     // TODO: Maybe make this into a sys_config option
     $srvdir = dirname($base)."/sql";
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => ona_sql('.$options.') called', 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => ona_sql('.$options.') called', 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -69,7 +69,7 @@ function ona_sql($options="") {
     // Check permissions
     if (!auth('ona_sql')) {
         $self['error'] = "Permission denied!";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         return(array(10, $self['error'] . "\n"));
     }
 
@@ -178,7 +178,7 @@ EOM
     // otherwise assume it is a sql statement being passed at the cli
     if($foundfile==false and substr($options['sql'], -4) == '.sql') {
         $self['error'] = "ERROR => Unable to find specified SQL stored on server: {$options['sql']}";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],2);
         return(array(10, $self['error']."\n"));
     }
 
@@ -198,7 +198,7 @@ EOM
     for ($i = 1; $i <= $qvars; $i++) {
         if (!array_key_exists($i,$options)) {
             $self['error'] = "ERROR => You did not supply a value for bind variable {$i}!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],2);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],2);
             return(array(10, $self['error']."\n"));
         }
         // assign the variables to sqlopts
@@ -209,12 +209,12 @@ EOM
     // Count how many times ? is in the sql statement.  there should be that many elements in sqlopts
     if (count($sqlopts) != $qvars) {
         $self['error'] = "ERROR => SQL query and bind variable count did not match.";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],2);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'],2);
         return(array(1, $self['error']."\n"));
     }
 
 
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => [ona_sql] Running SQL query: {$options['sql']}",5);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => [ona_sql] Running SQL query: {$options['sql']}",5);
 
     // Run the query
     $rs = $onadb->Execute($options['sql'],$sqlopts);

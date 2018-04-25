@@ -21,7 +21,7 @@
 ///////////////////////////////////////////////////////////////////////
 function mysql_purge_logs($options) {
     global $conf, $self, $ona_db;
-    printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => mysql_purge_logs('.$options.') called', 3);
+    printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . 'DEBUG => mysql_purge_logs('.$options.') called', 3);
 
     // Version - UPDATE on every edit!
     $version = '1.00';
@@ -76,7 +76,7 @@ EOM
     foreach ($slaves as $slave_host) {
         if(!$slave_host or $slave_host == "")
             continue;
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Connect to slave host mysql://{$options['user']}:{$options['password']}@{$slave_host}", 4);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => Connect to slave host mysql://{$options['user']}:{$options['password']}@{$slave_host}", 4);
         $dbh = db_connect('mysql', $slave_host, $options['user'], $options['password'], 'mysql');
         if(!$dbh || !$dbh->IsConnected())
             continue;
@@ -168,14 +168,14 @@ function db_connect($db_type, $host, $user, $pass, $database) {
         $ok2 = $object->IsConnected();
         $ok3 = $object->ErrorMsg();
         // If the connection didn't work, bail.
-        if (!$ok1 or !$ok2 or $ok3) {  printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$db_type} DB connection failed: " . $object->ErrorMsg(), 1); }
+        if (!$ok1 or !$ok2 or $ok3) {  printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$db_type} DB connection failed: " . $object->ErrorMsg(), 1); }
         // Otherwise exit the for loop.
         else { $connected = 1; }
     }
 
     // If it still isn't connected, return an error.
     if ($connected == 0) {
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$db_type} DB connection failed after 3 tries!  Maybe server is down? Error: " . $object->ErrorMsg());
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "ERROR => {$db_type} DB connection failed after 3 tries!  Maybe server is down? Error: " . $object->ErrorMsg());
     }
 
     return $object;

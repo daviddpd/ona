@@ -185,7 +185,7 @@ function ws_save($window_name, $form='') {
     // Don't insert a string of all white space!
     if($form['cust_attrib_type_name'] == "") {
         $self['error'] = "ERROR => Blank names not allowed.";
-        printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+        printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         $response->addScript("alert('{$self['error']}');");
         return($response->getXML());
     }
@@ -209,7 +209,7 @@ function ws_save($window_name, $form='') {
                                      );
             if ($status or !$rows) {
                 $self['error'] = "ERROR => cust_attrib_type edit update ws_save() failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
                 $response->addScript("alert('{$self['error']}');");
             }
             else {
@@ -218,9 +218,9 @@ function ws_save($window_name, $form='') {
 
                 // Return the success notice
                 $self['error'] = "INFO => Custom Attribute Type UPDATED:{$new_type['id']}: {$new_type['name']}";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
                 $log_msg = "INFO => Custom Attribute Type UPDATED:{$new_type['id']}: name[{$original_type['name']}=>{$new_type['name']}]";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $log_msg, 0);
             }
         }
     }
@@ -230,7 +230,7 @@ function ws_save($window_name, $form='') {
 
         if (!$id) {
             $self['error'] = "ERROR => The ona_get_next_id('custom_attribute_types') call failed!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             list($status, $rows) = db_insert_record($onadb,
@@ -245,11 +245,11 @@ function ws_save($window_name, $form='') {
 
             if ($status or !$rows) {
                 $self['error'] = "ERROR => Custom attribute type add ws_save() failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 $self['error'] = "INFO => Custom Attribute Type ADDED: {$form['cust_attrib_type_name']} ";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
         }
     }

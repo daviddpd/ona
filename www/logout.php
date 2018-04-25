@@ -13,7 +13,7 @@ error_reporting (E_ALL ^ E_NOTICE);
 // Log the user out and redirect them to the login page:
 
 // Print a logout message
-printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [Desktop] {$_SESSION['ona']['auth']['user']['username']} has logged out",0);
+printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "INFO => [Desktop] {$_SESSION['ona']['auth']['user']['username']} has logged out",0);
 
 // Unset session info relating to their account
 $_SESSION['ona']['auth'] = array();

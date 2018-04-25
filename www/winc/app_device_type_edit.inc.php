@@ -175,14 +175,14 @@ function ws_save($window_name, $form='') {
 
         if ($status or !$rows) {
             $self['error'] = "ERROR => device_type_edit update ws_save()  SQL Query failed: " . $self['error'];
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
             // Return the success notice
             $self['error'] = "INFO => Device Type UPDATED:{$original_type['id']}";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
           //  $self['error'] = "INFO => Device Type UPDATED:{$original_type['id']}: DEVICE_TYPE_DESCRIPTION[{$original_type['DEVICE_TYPE_DESCRIPTION']}=>{$form['device_type_description']}]";
-          //  printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+          //  printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
 
     }
@@ -191,18 +191,18 @@ function ws_save($window_name, $form='') {
         $id = ona_get_next_id('device_types');
         if (!$id) {
             $self['error'] = "ERROR => The ona_get_next_id() call failed!";
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
         }
         else {
-            printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => id for new device type: $id", 3);
+            printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . "DEBUG => id for new device type: $id", 3);
             list($status, $rows) = db_insert_record($onadb, 'device_types', array('id' => $id, 'model_id' => $form['model_id'], 'role_id' => $form['role_id']));
             if ($status or !$rows) {
                 $self['error'] = "ERROR => device_type_edit add ws_save()  SQL Query failed: " . $self['error'];
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
             else {
                 $self['error'] = "INFO => Device Type ADDED: {$form['id']} ";
-                printmg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
+                printmsg( pstr(__FILE__,__LINE__,__FUNCTION__) . $self['error'], 0);
             }
         }
     }
