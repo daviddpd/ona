@@ -202,7 +202,8 @@ EOM
                 'minimum'         => $minimum,
                 'default_ttl'     => $ttl,
                 'parent_id'       => $parent_domain['id'],
-                'serial'          => $serial_number
+                'serial'          => $serial_number,
+                'name_fqdn'       => $domain_name . "." . $parent_domain['fqdn'],
             )
         );
     if ($status or !$rows) {
@@ -546,7 +547,11 @@ EOM
             return(array(2, $self['error'] . "\n"));
         }
 
-        if ($entry['parent_id'] != $domain['id']) $SET['parent_id'] = $domain['id'];
+        if ($entry['parent_id'] != $domain['id']) {
+             $SET['parent_id'] = $domain['id'];
+             $SET['name_fqdn'] = $entry['name'] . "." . $domain['name'];
+        }
+
     } else {
         if ($entry['parent_id'] != 0) $SET['parent_id'] = 0;
     }
@@ -555,7 +560,10 @@ EOM
     // parent zones. https://github.com/opennetadmin/ona/issues/36
     if (is_string($options['set_name'])) {
         // trim leading and trailing whitespace from 'value'
-        if ($entry['name'] != trim($options['set_name'])) $SET['name'] = trim($options['set_name']);
+        if ($entry['name'] != trim($options['set_name'])) {
+            $SET['name'] = trim($options['set_name']);
+            $SET['name_fqdn'] = $SET['name'] . "." . $domain['name'];
+        }
 
         // Determine the entry itself exists
         list($status, $rows, $domain) = ona_get_domain_record(array('name' => $options['set_name']));
