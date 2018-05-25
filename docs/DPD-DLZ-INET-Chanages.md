@@ -45,8 +45,8 @@ NOTE: Zone Transfers haven't be tested yet.
 ```
 dlz "ONA Default" {
 	database "mysql
-	{host=a.b.c.d dbname=ona_ixsystems user=ona pass=xxx ssl=true}
-	{select name as zone from domains where name = '$zone$' limit 1}
+	{host=a.b.c.d dbname=ona_default user=ona pass=xxx ssl=true}
+	{select name_fqdn as zone from domains where name_fqdn = '$zone$' limit 1}
 {select
  case
     when dns.ttl = 0
@@ -67,7 +67,7 @@ dlz "ONA Default" {
               CASE
                   WHEN SUBSTRING(dns2.name, -1) = '.'
                     THEN dns2.name
-                ELSE concat(dns2.name, '.', domains.name, '.')
+                ELSE concat(dns2.name, '.', domains.name_fqdn, '.')
             end
               from dns as dns2 inner join domains on domains.id = dns2.domain_id where dns.dns_id = dns2.id)
     when lower(dns.type)='txt'
@@ -75,16 +75,16 @@ dlz "ONA Default" {
     when lower(dns.type)='srv'
       then concat('\"',
                   srv_pri ,' ', srv_weight,' ', srv_port, ' ',
-                  concat ( dns.name, '.' , domains.name),
+                  concat ( dns.name, '.' , domains.name_fqdn),
                   '\"')
   when lower(dns.type) in ('mx', 'ns')
-      then (select concat(dns2.name, '.', domains.name, '.') from dns as dns2 inner join domains on domains.id = dns2.domain_id where dns.dns_id = dns2.id)
-  else concat(dns.name, '.' , domains.name)
+      then (select concat(dns2.name, '.', domains.name_fqdn, '.') from dns as dns2 inner join domains on domains.id = dns2.domain_id where dns.dns_id = dns2.id)
+  else concat(dns.name, '.' , domains.name_fqdn)
   end as data
   from interfaces, dns, domains
   where
     dns.name =  if ('$record$' like '@', '', '$record$')
-    and domains.name = '$zone$'
+    and domains.name_fqdn = '$zone$'
     and dns.interface_id = interfaces.id
     and dns.domain_id = domains.id
     and upper(dns.type) not in ('SOA', 'NS')}
@@ -106,7 +106,7 @@ dlz "ONA Default" {
               CASE
                   WHEN SUBSTRING(dns2.name, -1) = '.'
                     THEN dns2.name
-                ELSE concat(dns2.name, '.', domains.name, '.')
+                ELSE concat(dns2.name, '.', domains.name_fqdn, '.')
             end
               from dns as dns2 inner join domains on domains.id = dns2.domain_id where dns.dns_id = dns2.id)
     when lower(dns.type) in ('soa')
@@ -118,11 +118,11 @@ dlz "ONA Default" {
           domains.retry,  ' ',
           domains.expiry,  ' ',
           domains.minimum )
-  else concat(dns.name, '.' , domains.name)
+  else concat(dns.name, '.' , domains.name_fqdn)
   end as data
   from interfaces, dns, domains
   where
-    domains.name = '$zone$'
+    domains.name_fqdn = '$zone$'
     and dns.interface_id = interfaces.id
     and dns.domain_id = domains.id
     and upper(dns.type) in ('SOA', 'NS') order by type DESC}

@@ -23,6 +23,23 @@ echo "Checking for SOA meta records:\n";
 list($status, $rows, $domains) = db_get_records($onadb, 'domains', 'id > 0');
 #print_r ( $domains );
 foreach ( $domains as $d ) {
+
+    if ( $d['parent_id'] > 0 ) {
+        list($s, $r, $parent_domain) = db_get_records($onadb, 'domains',  " id = " . $d['parent_id']  );
+        list($status, $rows) = db_update_record(
+            $onadb,
+            'domains',
+            array('id' => $d['id']),
+            array( 'name_fqdn' => $d['name'] . "." . $parent_domain[0]['name'] )
+        );
+    } else {
+        list($status, $rows) = db_update_record(
+            $onadb,
+            'domains',
+            array('id' => $d['id']),
+            array( 'name_fqdn' => $d['name'] )
+        );
+    }
     list($status, $rows, $soa) = db_get_records($onadb, 'dns', "type = 'SOA' and domain_id = '" . $d['id'] . "' ");
     if ( $rows == 0 ) {
         printf ("{%36s} - doesn't have an SOA DNS Record. \n", $d['name'] );

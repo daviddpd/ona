@@ -80,12 +80,12 @@ $conf = array (
         Allow MX, NS and CNAME records to point to external domains
         For example, this is needed for Gmail/GSuite MX Records.
      */
-    "allow_external_pointsto" => 0,
+    "allow_external_pointsto" => 1,
 
     /*
         Allow Duplicate A,AAA records for Round-Robin DNS
      */
-    "allow_duplicate_arecords" => 0,
+    "allow_duplicate_arecords" => 1,
 
     /* The output charset to be used in htmlentities() and htmlspecialchars() filtering */
     "charset"                => "utf8",
