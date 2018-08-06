@@ -72,11 +72,16 @@ dlz "ONA Default" {
               from dns as dns2 inner join domains on domains.id = dns2.domain_id where dns.dns_id = dns2.id)
     when lower(dns.type)='txt'
       then concat('\"', dns.txt, '\"')
+    when lower(dns.type)='srv' and SUBSTRING(dns.name, -1) = '.'
+        then
+            concat(
+                    srv_pri ,' ', srv_weight,' ', srv_port, ' ', dns.name
+                  )
     when lower(dns.type)='srv'
-      then concat('\"',
+      then concat(
                   srv_pri ,' ', srv_weight,' ', srv_port, ' ',
-                  concat ( dns.name, '.' , domains.name_fqdn),
-                  '\"')
+                  concat ( dns.name, '.' , domains.name_fqdn)
+                  )
   when lower(dns.type) in ('mx', 'ns')
       then (select concat(dns2.name, '.', domains.name_fqdn, '.') from dns as dns2 inner join domains on domains.id = dns2.domain_id where dns.dns_id = dns2.id)
   else concat(dns.name, '.' , domains.name_fqdn)

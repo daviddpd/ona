@@ -173,6 +173,8 @@ EOM
         return(array(6, $self['error'] . "\n"));
     }
     printmsg("DEBUG => domain_add(): New domain ID: {$id} name: {$domain_name}.{$parent_domain['fqdn']}", 3);
+    $_name_fqdn = $domain_name . "." . $parent_domain['fqdn'];
+    $_name_fqdn = preg_replace ("/\.$/", "", $_name_fqdn );
 
 
     // come up with a serial_number
@@ -203,7 +205,7 @@ EOM
                 'default_ttl'     => $ttl,
                 'parent_id'       => $parent_domain['id'],
                 'serial'          => $serial_number,
-                'name_fqdn'       => $domain_name . "." . $parent_domain['fqdn'],
+                'name_fqdn'       => $_name_fqdn,
             )
         );
     if ($status or !$rows) {

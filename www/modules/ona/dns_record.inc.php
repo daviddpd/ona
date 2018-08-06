@@ -666,7 +666,7 @@ complex DNS messes for themselves.
                 $pointsto_record['id'] = $dns_id;
                 list($status, $rows) = db_insert_record(
                 $onadb,
-                'dns',
+                'dns',                
                 array(
                     'id'                   => $dns_id,
                     'domain_id'            => $domain['id'],
@@ -755,9 +755,45 @@ complex DNS messes for themselves.
         // Find the dns record that it will point to
         list($status, $rows, $pointsto_record) = ona_get_dns_record(array('name' => $phostname, 'domain_id' => $pdomain['id'], 'type' => 'A','dns_view_id' => $add_viewid));
         if ($status or !$rows) {
-            printmsg("ERROR => Unable to find DNS A record to point SRV entry to!{$viewmsg}",3);
-            $self['error'] = "ERROR => Unable to find DNS A record to point SRV entry to!{$viewmsg}";
-            return(array(5, $self['error'] . "\n"));
+            if ( !$conf['allow_external_pointsto']) {
+                printmsg("ERROR => Unable to find DNS A record to point SRV entry to!{$viewmsg}",3);
+                $self['error'] = "ERROR => Unable to find DNS A record to point SRV entry to!{$viewmsg}";
+                return(array(5, $self['error'] . "\n"));
+            } else {
+                printmsg("DEBUG => [DNS SRV] Allowing an external pointer, Using 'pointsto' as given, hostname: {$options['pointsto']}, for domain { " . $domain['id'] . ":" .  $domain['name'] . " } Domain ID: {$pdomain['id']}", 3);
+                if ( !preg_match ( '/\.$/', $options['pointsto']) )
+                {
+                    $name = $options['pointsto'] . '.';
+                } else {
+                    $name = $options['pointsto'];
+                }
+                $dns_id = ona_get_next_id('dns');
+                $pointsto_record['interface_id'] = 0;
+                $pointsto_record['id'] = $dns_id;
+                printmsg("DEBUG => [DNS SRV] next id $dns_id - " . $domain['id']  . " $name", 3 );
+                
+                list($status, $rows) = db_insert_record(
+                $onadb,
+                'dns',
+                array(
+                    'id'                   => $dns_id,
+                    'domain_id'            => $domain['id'],
+                    'interface_id'         => 0,
+                    'dns_id'               => 0,
+                    'type'                 => 'A',
+                    'ttl'                  => 0,
+                    'name'                 => $name,
+                    'mx_preference'        => '0',
+                    'txt'                  => '',
+                    'srv_pri'              => 0,
+                    'srv_weight'           => 0,
+                    'srv_port'             => 0,
+                    'notes'                => '',
+                    'dns_view_id'          => 0
+                 )
+                );
+                printmsg("DEBUG => [DNS SRV] " . json_encode ( array ($status, $rows) ), 3 );
+            }
         }
 
         // Validate that there are no records already with this domain and host
@@ -973,7 +1009,7 @@ function dns_record_modify($options="") {
     // Version - UPDATE on every edit!
     $version = '1.13';
 
-    printmsg("DEBUG => dns_record_modify({$options}) called", 3);
+    printmsg("DEBUG => dns_record_modify( " . json_encode($options). "}) called", 3);
 
     // Parse incoming options string to an array
     $options = parse_options($options);
@@ -1063,8 +1099,9 @@ EOM
     $options['set_name'] = preg_replace("/^\./", '', $options['set_name']);
 
     // Find the DNS record from $options['name']
-    list($status, $rows, $dns) = ona_find_dns_record($options['server'] . "." . $domain['fqdn']);
-    printmsg("DEBUG => dns_record_modify() DNS record: {$dns['fqdn']}", 3);
+    // list($status, $rows, $dns) = ona_find_dns_record($options['server'] . "." . $domain['fqdn']);
+    list($status, $rows, $dns) = ona_find_dns_record($options['name']);
+    printmsg("DEBUG => dns_record_modify() DNS record: {" . json_encode ($dns['fqdn']) . "}", 3);
     if ($rows > 1) {
         printmsg("DEBUG => Found more than one DNS record for: {$options['name']}",3);
         $self['error'] = "ERROR => Found more than one DNS record for: {$options['name']}";
